@@ -7,6 +7,8 @@ use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\DetailproductController;
+use App\Http\Controllers\CheckoutController;
 
 Route::redirect('/','/inicio');
 
@@ -89,3 +91,24 @@ Route::post('/cart/decrease', [CartController::class, 'decreaseFromCartAjax'])->
 Route::post('/cart/increase', [CartController::class, 'increaseFromCartAjax'])->name('cart.increase.ajax');
 
 //*** Fin ruta Carrito  ***
+
+
+//*** Rutas Detalle Producto ***
+Route::get('/product/{id}', [DetailproductController::class, 'show'])->name('product.show');
+//*** Fin Ruta Detalle Producto */
+
+
+//*** Rutas CheckOut  */
+
+Route::get('/checkout', [CheckoutController::class, 'view'])->name('checkout.view');
+Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+
+Route::post('/flow/confirmacion', [CheckoutController::class, 'flowConfirmation'])->name('flow.confirmation');
+Route::get('/flow/retorno', [CheckoutController::class, 'flowReturn'])->name('flow.return');
+
+//*** Fin Ruta CheckOut */
+
+
+///*** Ruta Activacion de cuenta */
+Route::get('/activar-cuenta/{token}', [AuthController::class, 'activateAccount'])->name('activate.account');
+///*** Fin Ruta Activacion de cuenta */

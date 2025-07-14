@@ -25,7 +25,7 @@
             @endphp
             <tr id="product-row-{{ $id }}">
                 <td>{{ $item['name'] }}</td>
-                <td>${{ $item['price'] }}</td>
+                <td>${{  number_format($item['price'], 0) }}</td>
                 <td>
                     <button 
                         class="btn btn-sm btn-secondary decrease-btn" 
@@ -51,6 +51,9 @@
 </table>
 
 <h4 id="total-cart">Total: ${{ $total }}</h4>
+
+<a href="{{ route('checkout.view')}}"> <h3>Ir a Pagar </h3></a>
+
 <a href="{{ route('cart.clear') }}" class="btn btn-warning">Vaciar Carrito</a>
         @else
             <p>Tu carrito está vacío.</p>

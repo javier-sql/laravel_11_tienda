@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;  
+use App\Mail\ActivationEmail;    
+use Illuminate\Support\Str;      
 
 class AuthController extends Controller
 {
@@ -16,29 +19,31 @@ class AuthController extends Controller
         return view('auth.register');
     }
     // Registro de usuario
-    public function register(Request $request){
-        // validacion de los datos formulario
+    public function register(Request $request)
+    {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:3|confirmed',
         ]);
 
-        // rol por defecto
         $role = Role::where('name', 'usuario')->first();
 
-        // crear al usuario
+        $activation_token = Str::random(64);
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role_id' => $role->id,
+            'activation_token' => $activation_token,
+            'is_active' => false,
         ]);
 
-        // Iniciar sesión para el nuevo usuario
-        // auth()->login($user);
+        // enviar mail de activación
+        Mail::to($user->email)->send(new ActivationEmail($user));
 
-        return redirect('/inicio');
+        return redirect('/inicio')->with('success', 'Revisa tu correo para activar tu cuenta.');
     }
 
     // Formulario de inicio de sesión
@@ -55,10 +60,15 @@ class AuthController extends Controller
     
         // Intento de autenticación
         if (Auth::attempt($credentials)) {
+            if (!Auth::user()->is_active) {
+                Auth::logout();
+                return back()->withErrors(['email' => 'Debes activar tu cuenta antes de iniciar sesión.']);
+            }
+
             $request->session()->regenerate();
             return redirect()->intended('/inicio');
         }
-    
+
         // Si la autenticación falla
         return back()->withErrors([
             'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
@@ -73,4 +83,20 @@ class AuthController extends Controller
 
             return redirect('/inicio');
     }
+
+    public function activateAccount($token)
+    {
+        $user = User::where('activation_token', $token)->first();
+
+        if (!$user) {
+            return redirect('/inicio')->with('error', 'Token de activación inválido.');
+        }
+
+        $user->is_active = true;
+        $user->activation_token = null;
+        $user->save();
+
+        return redirect('/inicio')->with('success', 'Cuenta activada correctamente. Ya puedes iniciar sesión.');
+    }
+
 }

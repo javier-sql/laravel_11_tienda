@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Actualiza subtotal
         const subtotalEl = document.getElementById('subtotal-' + id);
-        subtotalEl.innerText = '$' + (price * quantity).toFixed(2);
+        subtotalEl.innerText = '$' + (price * quantity);
 
         // Actualiza total carrito en menú
         const totalSpan = document.getElementById('cart-total-quantity');
@@ -164,6 +164,20 @@ document.addEventListener('DOMContentLoaded', function () {
             totalSpan.innerText = `(${totalQuantity})`;
         } else {
             totalSpan.innerText = '';
+        }
+        updateTotalCart();
+    }
+
+    function updateTotalCart() {
+        let total = 0;
+        document.querySelectorAll('[id^="subtotal-"]').forEach(el => {
+            const amount = parseFloat(el.innerText.replace('$', ''));
+            total += amount;
+        });
+
+        const totalEl = document.getElementById('total-cart');
+        if (totalEl) {
+            totalEl.innerText = 'Total: $' + total;
         }
     }
 

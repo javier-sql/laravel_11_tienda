@@ -49,21 +49,6 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Carrito vaciado');
     }
 
-    // public function decreaseFromCart($id)
-    // {
-    //     $cart = session()->get('cart', []);
-
-    //     if (isset($cart[$id])) {
-    //         if ($cart[$id]['quantity'] > 1) {
-    //             $cart[$id]['quantity']--;
-    //         }
-
-    //         session()->put('cart', $cart);
-    // }
-
-    //     return redirect()->back()->with('success', 'Cantidad actualizada en el carrito');
-    // }
-
     public function decreaseFromCartAjax(Request $request)
     {
         $id = $request->input('id');

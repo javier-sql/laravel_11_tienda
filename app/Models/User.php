@@ -17,6 +17,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'activation_token',
+        'is_active',
     ];
     // Relación con el modelo Role
     public function role()

@@ -165,6 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             totalSpan.innerText = '';
         }
+        console.log("subtotal",price)
         updateTotalCart();
     }
 
@@ -186,8 +187,9 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             const id = this.dataset.id;
             const url = this.dataset.url;
-            const price = parseFloat(document.querySelector(`#product-row-${id} td:nth-child(2)`).innerText.replace('$',''));
-
+            const priceText = document.querySelector(`#product-row-${id} td:nth-child(2)`).innerText.replace('$','').replace(/\./g, '');
+            const price = parseFloat(priceText);
+                        
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -210,8 +212,9 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             const id = this.dataset.id;
             const url = this.dataset.url;
-            const price = parseFloat(document.querySelector(`#product-row-${id} td:nth-child(2)`).innerText.replace('$',''));
-
+            const priceText = document.querySelector(`#product-row-${id} td:nth-child(2)`).innerText.replace('$','').replace(/\./g, '');
+            const price = parseFloat(priceText);
+            
             fetch(url, {
                 method: 'POST',
                 headers: {

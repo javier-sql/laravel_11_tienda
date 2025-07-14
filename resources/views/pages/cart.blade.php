@@ -25,7 +25,7 @@
             @endphp
             <tr id="product-row-{{ $id }}">
                 <td>{{ $item['name'] }}</td>
-                <td>${{  number_format($item['price'], 0) }}</td>
+                <td>${{ number_format($item['price'], 0, ',', '.') }}</td>
                 <td>
                     <button 
                         class="btn btn-sm btn-secondary decrease-btn" 

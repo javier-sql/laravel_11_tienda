@@ -52,7 +52,7 @@
 
 <h4 id="total-cart">Total: ${{ $total }}</h4>
 
-<a href="{{ route('checkout.view')}}"> <h3>Ir a Pagar </h3></a>
+<a href="{{ route('checkout.view')}}"> <h3>Continuar Compra</h3></a>
 
 <a href="{{ route('cart.clear') }}" class="btn btn-warning">Vaciar Carrito</a>
         @else

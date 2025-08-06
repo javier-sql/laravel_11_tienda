@@ -10,13 +10,12 @@
 </head>
 <body>
     @include('components.navbar')
-
-    <div class="contenido">
+    <main>
+        <div class="contenido">
         @yield('content')
-    </div>
-
-    <!-- Aquí puedes incluir tus scripts -->
-
+        </div> 
+    </main>
+        
     @include('components.footer')
 
 </body>

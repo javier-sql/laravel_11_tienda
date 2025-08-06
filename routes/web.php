@@ -4,11 +4,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DetailproductController;
 use App\Http\Controllers\CheckoutController;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 Route::redirect('/','/inicio');
 
@@ -80,12 +83,14 @@ Route::get('/productos', [ProductoController::class, 'Mostrar'])->name('Mostrar'
 
 
 //*** Rutas Carrito ***
-
 Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
-Route::get('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('cart.add');
+
+Route::post('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('cart.add');
+
+
 Route::get('/remove-from-cart/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+
 Route::get('/clear-cart', [CartController::class, 'clearCart'])->name('cart.clear');
-//Route::get('/decrease-from-cart/{id}', [CartController::class, 'decreaseFromCart'])->name('cart.decrease');
 
 Route::post('/cart/decrease', [CartController::class, 'decreaseFromCartAjax'])->name('cart.decrease.ajax');
 Route::post('/cart/increase', [CartController::class, 'increaseFromCartAjax'])->name('cart.increase.ajax');
@@ -103,8 +108,9 @@ Route::get('/product/{id}', [DetailproductController::class, 'show'])->name('pro
 Route::get('/checkout', [CheckoutController::class, 'view'])->name('checkout.view');
 Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
 
-Route::post('/flow/confirmacion', [CheckoutController::class, 'flowConfirmation'])->name('flow.confirmation');
-Route::get('/flow/retorno', [CheckoutController::class, 'flowReturn'])->name('flow.return');
+Route::match(['get', 'post'], 'flow/retorno', [CheckoutController::class, 'flowReturn']);
+Route::match(['get', 'post'], 'flow/confirmacion', [CheckoutController::class, 'flowConfirmation']);
+
 
 //*** Fin Ruta CheckOut */
 
@@ -112,3 +118,57 @@ Route::get('/flow/retorno', [CheckoutController::class, 'flowReturn'])->name('fl
 ///*** Ruta Activacion de cuenta */
 Route::get('/activar-cuenta/{token}', [AuthController::class, 'activateAccount'])->name('activate.account');
 ///*** Fin Ruta Activacion de cuenta */
+
+
+//TEST
+Route::get('/flow-test', function () {
+    
+    $secretKey = 'b88ae8b531819d471a566db89438bf842833bdad';
+
+    $params = [
+        "apiKey" => "5E41EFA7-A785-4F19-9F7A-75826F7L7370",
+        "amount" => 5000,
+        "currency" => "CLP",
+        "commerceOrder" => "order-1753282972",
+        "email" => "javierfgg.96@gmail.com",
+        "subject" => "Compra de prueba",
+        "urlConfirmation" => "https://cv-puce-three.vercel.app/flow/confirmacion",
+        "urlReturn" => "https://cv-puce-three.vercel.app/flow/retorno",
+        "service" => "payment/create"
+    ];
+
+    // Paso 1: ordenar las claves alfabéticamente
+    $keys = array_keys($params);
+    sort($keys);
+
+    // Paso 2: concatenar nombre y valor
+    $toSign = '';
+    foreach ($keys as $key) {
+        $toSign .= $key . $params[$key];
+    }
+
+    // Paso 3: generar firma HMAC SHA256
+    $signature = hash_hmac('sha256', $toSign, $secretKey);
+
+    // Agregar firma al payload
+    $params['s'] = $signature;
+
+    Log::info("Cadena a firmar: " . $toSign);
+    Log::info("Firma generada: " . $signature);
+
+        // Hacer POST
+    $response = Http::asForm()->post('https://sandbox.flow.cl/api/payment/create', $params);
+
+    // Verificar respuesta
+    if ($response->successful()) {
+        //return $response->json(); // o redirigir al link
+        return redirect($response->json()['url'] . '?token=' . $response->json()['token']);
+
+    } else {
+        return response()->json([
+            'error' => 'Error al crear pago',
+            'body' => $response->body(),
+            'status' => $response->status()
+        ]);
+    }
+});

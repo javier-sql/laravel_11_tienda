@@ -1,21 +1,46 @@
+window.PreviewModalImage = function () {
+    const input = document.getElementById('modal-image-input');
+    const preview = document.getElementById('preview-image');
+
+    if (input && preview) {
+        input.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+};
+
+
 window.openModalWithData = function(id, name, description, price, stock, image, categoryId, brandId) {
+    const form = document.getElementById('editForm');
+    form.action = `/administrador/update/${id}`;
+
+    // Mostrar el modal
     const modal = document.getElementById('editModal');
     modal.style.display = 'block';
 
+    // Llenar los campos
     document.getElementById('modal-id').value = id;
     document.getElementById('modal-name').value = name;
     document.getElementById('modal-description').value = description;
     document.getElementById('modal-price').value = price;
     document.getElementById('modal-stock').value = stock;
-    document.getElementById('modal-image').value = image;
     document.getElementById('modal-category').value = categoryId;
     document.getElementById('modal-brand').value = brandId;
 
-    const form = document.getElementById('editForm');
-    form.action = `/administrador/update/${id}`;
-
-
+    // Mostrar imagen actual
+    const preview = document.getElementById('preview-image');
+    preview.src = `/storage/${image}`;
 };
+
+
 
 window.closeModal = function() {
     document.getElementById('editModal').style.display = 'none';
@@ -146,8 +171,6 @@ window.closeModalDeleteBrand = function() {
     document.getElementById('brandWarning').style.display = 'none';
 }
 
-///AJAX PRUEBA
-
 document.addEventListener('DOMContentLoaded', function () {
 
     function updateCartUI(id, quantity, totalQuantity, price) {
@@ -159,11 +182,13 @@ document.addEventListener('DOMContentLoaded', function () {
         subtotalEl.innerText = '$' + (price * quantity);
 
         // Actualiza total carrito en menú
-        const totalSpan = document.getElementById('cart-total-quantity');
+        const totalQuantityNav = document.querySelector('.cart-total-quantity');
+
+
         if (totalQuantity > 0) {
-            totalSpan.innerText = `(${totalQuantity})`;
+            totalQuantityNav.innerText = `(${totalQuantity})`;
         } else {
-            totalSpan.innerText = '';
+            totalSpan.innerText = '0';
         }
         console.log("subtotal",price)
         updateTotalCart();
@@ -177,8 +202,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         const totalEl = document.getElementById('total-cart');
+        const totalNav = document.querySelector('.cart-total-price');
+
         if (totalEl) {
             totalEl.innerText = 'Total: $' + total;
+            totalNav.innerText = '$' + total.toLocaleString('es-CL');
         }
     }
 
@@ -192,6 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         
             fetch(url, {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -217,6 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
             
             fetch(url, {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -232,4 +262,84 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector("form");
+        if (form) {
+            form.addEventListener("submit", function () {
+                const submitBtn = this.querySelector("button[type='submit']");
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                }
+            });
+        }
+    });
+
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.dataset.id;
+
+            fetch(`/add-to-cart/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    // alert(data.success);
+                    // alert(data.cart_count)
+                    // Actualiza el contador del carrito
+                    const totalQuantityElement = document.querySelector('.cart-total-quantity');
+                    if (totalQuantityElement) {
+                        totalQuantityElement.innerText = `(${data.cart_count})`;
+                    }
+                    // alert(data.total_price)
+
+                    const totalPriceElement = document.querySelector('.cart-total-price');
+                    if (totalPriceElement) {
+                        totalPriceElement.innerText = `$${data.total_price.toLocaleString('es-CL')}`;
+                    }
+
+                } else if(data.error){
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al agregar al carrito');
+            });
+        });
+    });
+
+    const openBtn = document.getElementById('openMenu');
+    const closeBtn = document.getElementById('closeMenu');
+    const menu = document.getElementById('menu-hamburger');
+
+    openBtn.addEventListener('click', () => {
+    menu.style.display = 'block';
+    menu.offsetHeight;  // fuerza repaint
+    menu.classList.add('active');
+    });
+
+    closeBtn.addEventListener('click', () => {
+    menu.classList.remove('active');
+    });
+
+    menu.addEventListener('transitionend', () => {
+    if (!menu.classList.contains('active')) {
+        menu.style.display = 'none';
+    }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 917) {
+            menu.classList.remove('active');
+            menu.style.display = 'none'; // ← Esto es lo que faltaba
+        }
+    });
+
 });
+

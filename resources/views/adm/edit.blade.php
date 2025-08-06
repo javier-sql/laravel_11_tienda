@@ -25,7 +25,9 @@
         <td>{{ $product->description }}</td>
         <td>{{ $product->price }}</td>
         <td>{{ $product->stock }}</td>
-        <td> <img src='{{ $product->image }}'> </td>
+        <td> 
+            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="50" height="50">
+        </td>
         <td>{{ $product->category->name }}</td>
         <td>{{ $product->brand->name }}</td>
         <td>{{ $product->user->name }}</td>
@@ -51,7 +53,7 @@
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <h2>Editar producto</h2>
-        <form id="editForm" method="POST">
+        <form id="editForm" method="POST" enctype="multipart/form-data" action="">
 
             @csrf
             <label>Id:</label>
@@ -69,8 +71,11 @@
             <label>Stock:</label>
             <input type="number" name="stock" id="modal-stock" required>
 
-            <label>Imagen (URL):</label>
-            <input type="text" name="image" id="modal-image">
+            <label>Imagen:</label>
+            <img id="preview-image" src="" alt="Vista previa" width="150">
+            <input type="file" name="image" id="modal-image-input" accept="image/*">
+
+
 
             <label>Categoría:</label>
             <select name="category_id" id="modal-category" required>

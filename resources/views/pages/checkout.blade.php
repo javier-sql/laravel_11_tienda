@@ -2,8 +2,12 @@
 
 @section('content')
 <div class="container">
-    <h2>Finalizar Compra</h2>
 
+    <h2>Formulario de correo</h2>
+
+    <h2>formulario de envio</h2>
+
+    <h2>Formulario de pago</h2>
     <form action="{{ route('checkout.process') }}" method="POST">
         @csrf
 
@@ -32,5 +36,6 @@
 
         <button class="btn btn-success" type="submit">Pagar con Flow</button>
     </form>
+
 </div>
 @endsection

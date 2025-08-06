@@ -13,7 +13,7 @@
             <p>{{ $product->description }}</p>
             <p><strong>Stock disponible:</strong> {{ $product->stock }}</p>
 
-            <a href="{{ route('cart.add', $product->id) }}" class="btn btn-primary">Agregar al carrito</a>
+        <button class="add-to-cart-btn" data-id="{{ $product->id }}">Agregar al carrito</button>
         </div>
         
         <a href="{{ route('cart.view')}}">Ir al Carro</a>

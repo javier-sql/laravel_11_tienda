@@ -2,29 +2,63 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Models\Products;
 
 class CartController extends Controller
 {
-    public function addToCart($id)
-    {
-        $product = Products::findOrFail($id);
-        $cart = session()->get('cart', []);
 
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity']++;
-        } else {
-            $cart[$id] = [
-                "name" => $product->name,
-                "price" => $product->price,
-                "quantity" => 1
-            ];
+public function addToCart($id, Request $request)
+{
+    Log::debug('addToCart called', [
+        'ajax' => $request->ajax(),
+        'method' => $request->method(),
+        'expectsJson' => $request->expectsJson(),
+    ]);
+
+    $product = Products::findOrFail($id);
+    $cart = session()->get('cart', []);
+
+    $currentQuantity = $cart[$id]['quantity'] ?? 0;
+
+    if ($currentQuantity >= $product->stock) {
+        if ($request->expectsJson()) {
+            return response()->json(['error' => 'No hay más stock disponible para este producto.'], 400);
         }
 
-        session()->put('cart', $cart);
-
-        return redirect()->back()->with('success', 'Producto agregado al carrito');
+        return redirect()->back()->with('error', 'No hay más stock disponible para este producto.');
     }
+
+    if (isset($cart[$id])) {
+        $cart[$id]['quantity']++;
+    } else {
+        $cart[$id] = [
+            "name" => $product->name,
+            "price" => $product->price,
+            "quantity" => 1
+        ];
+    }
+
+    session()->put('cart', $cart);
+    
+    $totalQuantity = array_sum(array_column($cart, 'quantity'));
+    $totalPrice = 0;
+    foreach ($cart as $item) {
+        $totalPrice += $item['price'] * $item['quantity'];
+    }
+
+    if ($request->expectsJson()) {
+        return response()->json([
+            'success' => 'Producto agregado al carrito',
+            'cart_count' => array_sum(array_column(session('cart'), 'quantity')),
+            'total_price' => $totalPrice
+        ]);
+
+    }
+
+}
+
+
 
     public function viewCart()
     {
@@ -43,11 +77,23 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Producto eliminado del carrito');
     }
 
-    public function clearCart()
+    public function clearCart(Request $request)
     {
+        Log::debug('borrando)');
+        // Recibir desde query string
+        $success = $request->query('success') === '1';
+        $message = $request->query('message', '');
+
+        if ($success) {
+            session()->forget('cart');
+            return view('flow.return', compact('success', 'message'));
+        }
+        
         session()->forget('cart');
-        return redirect()->back()->with('success', 'Carrito vaciado');
+        return redirect()->back()->with('success', 'Carrito vaciado correctamente');
     }
+
+
 
     public function decreaseFromCartAjax(Request $request)
     {
@@ -69,24 +115,39 @@ class CartController extends Controller
         ]);
     }
 
+
     public function increaseFromCartAjax(Request $request)
     {
         $id = $request->input('id');
         $cart = session()->get('cart', []);
 
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity']++;
-            session()->put('cart', $cart);
+        $product = Products::find($id);
+
+        if (!$product) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Producto no encontrado',
+            ], 404);
         }
 
-        $totalQuantity = array_sum(array_column($cart, 'quantity'));
-        $quantity = $cart[$id]['quantity'] ?? 0;
+        $currentQuantity = $cart[$id]['quantity'] ?? 0;
 
-        return response()->json([
-            'success' => true,
-            'quantity' => $quantity,
-            'totalQuantity' => $totalQuantity,
-        ]);
+        if ($currentQuantity < $product->stock) {
+            $cart[$id]['quantity'] = $currentQuantity + 1;
+            session()->put('cart', $cart);
+
+            return response()->json([
+                'success' => true,
+                'quantity' => $cart[$id]['quantity'],
+                'totalQuantity' => array_sum(array_column($cart, 'quantity')),
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'quantity' => $currentQuantity,
+                'message' => 'No hay más stock disponible',
+            ]);
+        }
     }
 
 

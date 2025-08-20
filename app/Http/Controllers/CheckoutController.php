@@ -89,8 +89,8 @@ class CheckoutController extends Controller
 
         DB::commit();
 
-    $secretKey = 'b88ae8b531819d471a566db89438bf842833bdad';
-    $apikey = '5E41EFA7-A785-4F19-9F7A-75826F7L7370';
+    $secretKey = env('FLOW_SECRET_KEY');
+    $apikey = env('FLOW_API_KEY');
     $urlngrok = 'https://6def0f55088e.ngrok-free.app';
 
     $params = [
@@ -159,7 +159,7 @@ public function flowReturn(Request $request)
     }
 
     $secretKey = env('FLOW_SECRET_KEY');
-    $apikey = env('FLOW_API_KEY'); // Asegúrate de que este valor esté definido en tu archivo .env
+    $apikey = env('FLOW_API_KEY');
 
     $params = [
         'token' => $token,
@@ -247,8 +247,8 @@ public function flowConfirmation(Request $request)
         return response('Bad Request', 400);
     }
 
-    $secretKey = 'b88ae8b531819d471a566db89438bf842833bdad';
-    $apikey = '5E41EFA7-A785-4F19-9F7A-75826F7L7370';
+    $secretKey = env('FLOW_SECRET_KEY');
+    $apikey = env('FLOW_API_KEY');
 
     // Parámetros sin firma
     $params = [

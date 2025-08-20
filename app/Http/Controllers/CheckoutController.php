@@ -158,8 +158,8 @@ public function flowReturn(Request $request)
         return response('Token no recibido', 400);
     }
 
-    $secretKey = 'b88ae8b531819d471a566db89438bf842833bdad';
-    $apikey = '5E41EFA7-A785-4F19-9F7A-75826F7L7370';
+    $secretKey = env('FLOW_SECRET_KEY');
+    $apikey = env('FLOW_API_KEY'); // Asegúrate de que este valor esté definido en tu archivo .env
 
     $params = [
         'token' => $token,

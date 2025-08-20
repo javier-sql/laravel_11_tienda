@@ -38,6 +38,10 @@ main {
     margin-top: 90px;
 }
 
+body {
+    background-color: #fafafa;
+}
+
 /* Navigation */
 
 .navbar {
@@ -280,3 +284,115 @@ main {
     position: absolute;
     top: 0;
 }
+
+
+/* CSS - PRODUCTOS */
+
+
+
+.img-carroadd {
+    width: 25px;
+    height: 25px;
+}
+
+/* Estado normal */
+.btn-carroadd {
+    background: none;
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover sobre toda la tarjeta → botón gris */
+.product-item:hover .btn-carroadd {
+    background-color: #ccc; /* gris */
+}
+
+/* Hover sobre el botón */
+.product-item:hover .btn-carroadd:hover {
+    background-color: #e8a739; 
+}
+
+/* Signo + oculto por defecto */
+.btn-carroadd::after {
+    cursor: pointer;
+    content: "+"; /* texto */
+    position: absolute;
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    transform: translateX(11px) translateY(-7px);
+}
+
+/* Cuando el mouse esté sobre el botón → mostrar + */
+.btn-carroadd:hover::after {
+    opacity: 1;
+}
+.product-details{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.product-price{
+    justify-content: flex-start;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;    
+}
+
+.img-producto{
+    width: 245px;
+    height: 245px;
+    object-fit: cover;
+}
+
+.filter-text{
+    padding: 23px 30px;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.text-filter{
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.products-container {
+  display: flex;
+  justify-content: center;        /* Centra horizontalmente */
+  align-items: flex-start;        /* Alinea arriba */
+  gap: 40px;                      /* Espacio entre filtros y productos */
+  padding: 40px;
+  max-width: 1200px;              /* Ancho máximo para centrar */
+  margin: 0 auto;                 /* Centrado horizontal */
+}
+
+.filter-container {
+  min-width: 270px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+}
+
+.products-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  flex: 1;
+}
+
+.product-item {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+

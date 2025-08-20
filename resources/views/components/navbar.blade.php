@@ -30,7 +30,7 @@
             </ul>
 
             <ul class="navbar-group navbar-right">
-                <li><p class="menu-text">${{ number_format($totalPrice, 0, ',', '.') }}</p></li>
+                <li><p class="cart-total-price font-size">${{ number_format($totalPrice, 0, ',', '.') }}</p></li>
                 <li>
                     <a class="menu-text" href="{{ url('/cart') }}">
                         <img class="carro" src="{{ asset('storage/page/carro.png') }}" alt="">
@@ -61,13 +61,11 @@
                         @endif
                         <li class="hamburger-list"><a class="menu-text" href="{{ url('/inicio') }}">Contacto</a></li>
 
-                        <li class="hamburger-list"><p>${{ number_format($totalPrice, 0, ',', '.') }}</p></li>
+                        <li class="hamburger-list"><p class="cart-total-price font-size">${{ number_format($totalPrice, 0, ',', '.') }}</p></li>
                         <li class="hamburger-list">
                             <a class="menu-text" href="{{ url('/cart') }}">
                                 <img class="carro" src="{{ asset('storage/page/carro.png') }}" alt="">
-                                @if ($totalQuantity > 0)
                                     <span class="cart-total-quantity" style="color: red;">({{ $totalQuantity }})</span>
-                                @endif
                             </a>
                         </li>
                         <li class="hamburger-list">
@@ -93,7 +91,7 @@
             </ul>
 
             <ul class="navbar-group navbar-right">
-            <li><p class="cart-total-price">${{ number_format($totalPrice, 0, ',', '.') }}</p></li>
+            <li><p class="cart-total-price font-size">${{ number_format($totalPrice, 0, ',', '.') }}</p></li>
                 <li>
                     <a class="menu-text" href="{{ url('/cart') }}">
                         <img class="carro" src="{{ asset('storage/page/carro.png') }}" alt="">
@@ -116,13 +114,11 @@
                         <li class="hamburger-list"><a class="menu-text" href="{{ url('/productos') }}">Productos</a></li>
                         <li class="hamburger-list"><a class="menu-text" href="{{ url('/inicio') }}">Contacto</a></li>
 
-                        <li class="hamburger-list"><p>${{ number_format($totalPrice, 0, ',', '.') }}</p></li>
+                        <li class="hamburger-list"><p class="cart-total-price">${{ number_format($totalPrice, 0, ',', '.') }}</p></li>
                         <li class="hamburger-list">
                             <a class="menu-text" href="{{ url('/cart') }}">
                                 <img class="carro" src="{{ asset('storage/page/carro.png') }}" alt="">
-                                @if ($totalQuantity > 0)
                                     <span class="cart-total-quantity" style="color: red;">({{ $totalQuantity }})</span>
-                                @endif
                             </a>
                         </li>
                         <li><a class="menu-text" href="{{ url('/login') }}">Iniciar Sesión</a></li>

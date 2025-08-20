@@ -182,15 +182,15 @@ document.addEventListener('DOMContentLoaded', function () {
         subtotalEl.innerText = '$' + (price * quantity);
 
         // Actualiza total carrito en menú
-        const totalQuantityNav = document.querySelector('.cart-total-quantity');
+        const totalQuantityNavs = document.querySelectorAll('.cart-total-quantity');
 
-
-        if (totalQuantity > 0) {
-            totalQuantityNav.innerText = `(${totalQuantity})`;
-        } else {
-            totalSpan.innerText = '0';
-        }
-        console.log("subtotal",price)
+        totalQuantityNavs.forEach(span => {
+            if (totalQuantity > 0) {
+                span.innerText = `(${totalQuantity})`;
+            } else {
+                span.innerText = '0';
+            }
+        });
         updateTotalCart();
     }
 
@@ -202,11 +202,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         const totalEl = document.getElementById('total-cart');
-        const totalNav = document.querySelector('.cart-total-price');
+        const totalNav = document.querySelectorAll('.cart-total-price');
 
         if (totalEl) {
             totalEl.innerText = 'Total: $' + total;
-            totalNav.innerText = '$' + total.toLocaleString('es-CL');
+            totalNav.forEach(p => {
+                p.innerText = '$' + total.toLocaleString('es-CL');
+            });
         }
     }
 
@@ -292,16 +294,28 @@ document.addEventListener('DOMContentLoaded', function () {
                     // alert(data.success);
                     // alert(data.cart_count)
                     // Actualiza el contador del carrito
-                    const totalQuantityElement = document.querySelector('.cart-total-quantity');
-                    if (totalQuantityElement) {
-                        totalQuantityElement.innerText = `(${data.cart_count})`;
-                    }
-                    // alert(data.total_price)
+                    const totalQuantityElement = document.querySelectorAll('.cart-total-quantity');
+                    totalQuantityElement.forEach(span => {
+                        if (data.cart_count > 0) {
+                            span.innerText = `(${data.cart_count})`;
+                        } else {
+                            span.innerText = '0';
+                        }
+                    });
 
-                    const totalPriceElement = document.querySelector('.cart-total-price');
-                    if (totalPriceElement) {
-                        totalPriceElement.innerText = `$${data.total_price.toLocaleString('es-CL')}`;
-                    }
+                    const totalPriceElement = document.querySelectorAll('.cart-total-price');
+                    totalPriceElement.forEach(p =>{
+                        if (data.total_price > 0) {
+                            p.innerText = `$${data.total_price.toLocaleString('es-CL')}`;
+                        } else {
+                            p.innerText = '$0';
+                        }
+                    })
+
+
+                    // if (totalPriceElement) {
+                    //     totalPriceElement.innerText = `$${data.total_price.toLocaleString('es-CL')}`;
+                    // }
 
                 } else if(data.error){
                     alert(data.error);

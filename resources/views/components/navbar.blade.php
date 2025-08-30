@@ -93,7 +93,7 @@
             <ul class="navbar-group navbar-right">
             <li><p class="cart-total-price font-size">${{ number_format($totalPrice, 0, ',', '.') }}</p></li>
                 <li>
-                    <a class="menu-text" href="{{ url('/cart') }}">
+                    <a class="" href="{{ url('/cart') }}">
                         <img class="carro" src="{{ asset('storage/page/carro.png') }}" alt="">
                             <span class="cart-total-quantity" style="color: red;">({{ $totalQuantity }})</span>
                     </a>

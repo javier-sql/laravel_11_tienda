@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 
+
 class CheckoutController extends Controller
 {
     public function view()
@@ -19,12 +20,176 @@ class CheckoutController extends Controller
         if (empty(session('cart'))) {
             return redirect()->route('cart.view')->with('error', 'Tu carrito está vacío.');
         }
+        // Ciudad de origen fija (Santiago)
+        $originCityCode = env('STARKEN_ORIGIN_CITY');
 
-        return view('pages.checkout');
+        // Ciudades de destino
+        $destResponse = Http::withHeaders([
+            'rut'   => '76211240',
+            'clave' => env('STARKEN_APIKEY'),
+            'Content-Type' => 'application/json',
+        ])->get('https://restservices-qa.starken.cl/apiqa/starkenservices/rest/listarCiudadesDestino');
+
+        $destCities = $destResponse->successful()
+            ? $destResponse->json()['listaCiudadesDestino'] ?? []
+            : [];
+
+        return view('pages.checkout', compact('destCities', 'originCityCode'));
+
     }
 
-    public function process(Request $request)
-    {
+
+// public function calcularTarifa(Request $request)
+// {
+//     $originCity = env('STARKEN_ORIGIN_CITY'); // Ciudad de origen desde .env
+//     $destCity   = $request->input('dest_city');
+//     $weight     = $request->input('weight') ?? 1;   
+//     $length     = $request->input('length') ?? 1;   
+//     $width      = $request->input('width') ?? 1;    
+//     $height     = $request->input('height') ?? 1;   
+
+//     // ⚡ parámetros obligatorios según la documentación de Starken
+//     $params = [
+//         "codigoCiudadOrigen"   => (int) $originCity,
+//         "codigoCiudadDestino"  => (int) $destCity,
+//         "codigoAgenciaOrigen"  => 0,
+//         "codigoAgenciaDestino" => 0,
+//         "alto"                 => (int) $height,
+//         "ancho"                => (int) $width,
+//         "largo"                => (int) $length,
+//         "kilos"                => (int) $weight,
+//         "cuentaCorriente"      => "", // vacío si no hay
+//         "cuentaCorrienteDV"    => "",
+//         "rutCliente"           => env('STARKEN_RUTCLIENTE', '13061694') // ⚡ obligatorio
+//     ];
+
+//     try {
+//         $response = Http::withHeaders([
+//             'rut'   => env('STARKEN_RUTCLIENTE', '76211240'), // tu RUT de prueba
+//             'clave' => env('STARKEN_APIKEY'),
+//             'Content-Type' => 'application/json',
+//         ])->post('https://restservices-qa.starken.cl/apiqa/starkenservices/rest/consultarTarifas', $params);
+
+//         $data = $response->json();
+
+//         // Validamos que haya tarifas
+//         if (isset($data['listaTarifas']) && count($data['listaTarifas']) > 0) {
+//             // Tomamos la opción más barata
+//             $tarifa = collect($data['listaTarifas'])->sortBy('costoTotal')->first();
+//             return response()->json([
+//                 'success' => true,
+//                 'tarifa' => $tarifa,
+//                 'all' => $data['listaTarifas']
+//             ]);
+//         }
+
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'No se encontraron tarifas',
+//             'data' => $data
+//         ]);
+
+//     } catch (\Exception $e) {
+//         Log::error('Error tarifa Starken', [
+//             'request' => $params,
+//             'error' => $e->getMessage()
+//         ]);
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Error al consultar tarifa',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+    
+// }
+
+public function calcularTarifa(Request $request)
+{
+    $originCity = env('STARKEN_ORIGIN_CITY'); // ciudad de origen
+    $destCity   = $request->input('dest_city');
+
+    $cart = session('cart', []);
+    if (empty($cart)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Carrito vacío'
+        ], 400);
+    }
+
+    // Array para guardar los productos con sus cantidades
+    $cartProducts = [];
+
+    foreach ($cart as $productId => $item) {
+        $product = Products::find($productId);
+        if ($product) {
+            $quantity = $item['quantity'] ?? 1;
+            $cartProducts[] = (object)[
+                'weight' => $product->weight * $quantity,
+                'length' => $product->length * $quantity,
+                'width'  => $product->width,
+                'height' => $product->height
+            ];
+        }
+    }
+
+    // ⚡ Calculamos total de peso y dimensiones
+    $totalWeight = array_sum(array_map(fn($p) => $p->weight, $cartProducts));
+    $maxLength   = array_sum(array_map(fn($p) => $p->length, $cartProducts));
+    $maxWidth    = max(array_map(fn($p) => $p->width, $cartProducts));
+    $maxHeight   = max(array_map(fn($p) => $p->height, $cartProducts));
+
+    // Aplicamos regla mínima de Starken
+    $totalWeight = max(1, ceil($totalWeight));
+    $maxLength   = max(1, ceil($maxLength));
+    $maxWidth    = max(1, ceil($maxWidth));
+    $maxHeight   = max(1, ceil($maxHeight));
+
+    Log::info("Dimensiones y peso calculados:", [
+        'alto'  =>  $maxHeight,
+        'ancho' => $maxWidth ,
+        'largo' => $maxLength ,
+        'kilos' => $totalWeight
+    ]);
+
+    $params = [
+        "codigoCiudadOrigen"   => (int) $originCity,
+        "codigoCiudadDestino"  => (int) $destCity,
+        "codigoAgenciaOrigen"  => 0,
+        "codigoAgenciaDestino" => 0,
+        "alto"                 => $maxHeight,
+        "ancho"                => $maxWidth,
+        "largo"                => $maxLength,
+        "kilos"                => $totalWeight,
+        "cuentaCorriente"      => "",          
+        "cuentaCorrienteDV"    => "",          
+        "rutCliente"           => "76211240"   
+    ];
+
+    $response = Http::withHeaders([
+        'rut'   => '76211240',
+        'clave' => env('STARKEN_APIKEY'),
+        'Content-Type' => 'application/json',
+    ])->post('https://restservices-qa.starken.cl/apiqa/starkenservices/rest/consultarTarifas', $params);
+
+    if ($response->successful()) {
+        $data = $response->json();
+        return response()->json([
+            'success' => true,
+            'tarifa' => $data['listaTarifas'][0] ?? null, // tomar la primera tarifa
+            'raw' => $data
+        ]);
+    } else {
+        return response()->json([
+            'success' => false,
+            'status' => $response->status(),
+            'response' => $response->body()
+        ], 500);
+    }
+}
+
+
+public function process(Request $request)
+{
     $cart = session('cart', []);
     if (empty($cart)) {
         return redirect()->route('cart.view')->with('error', 'Tu carrito está vacío.');
@@ -91,7 +256,7 @@ class CheckoutController extends Controller
 
     $secretKey = env('FLOW_SECRET_KEY');
     $apikey = env('FLOW_API_KEY');
-    $urlngrok = 'https://6def0f55088e.ngrok-free.app';
+    $urlngrok = 'https://0f47b65b2840.ngrok-free.app';
 
     $params = [
         "apiKey" => $apikey,
@@ -144,8 +309,6 @@ class CheckoutController extends Controller
         return redirect()->route('cart.view')->with('error', 'Error al procesar tu compra: ' . $e->getMessage());
     }
 }
-
-
 
 public function flowReturn(Request $request)
 {
@@ -231,9 +394,6 @@ public function flowReturn(Request $request)
     return response('Error al consultar Flow', 500);
 }
 
-
-
-
 public function flowConfirmation(Request $request)
 {
     Log::info("✅ Entró a flowConfirmation");
@@ -308,6 +468,66 @@ public function flowConfirmation(Request $request)
         return response('Error', 500);
     }
 }
+
+
+
+public function testTarifaStarken()
+{
+    $params = [
+        "codigoCiudadOrigen"   => 1,           // Ciudad origen
+        "codigoCiudadDestino"  => 1,           // Ciudad destino
+        "codigoAgenciaOrigen"  => 0,
+        "codigoAgenciaDestino" => 0,
+        "alto"                 => 22,           // cm
+        "ancho"                => 22,           // cm
+        "largo"                => 22,           // cm
+        "kilos"                => 1,           // kg
+        "cuentaCorriente"      => "",          // vacío si usas rutCliente
+        "cuentaCorrienteDV"    => "",          // vacío si usas rutCliente
+        "rutCliente"           => "76211240"   // tu RUT de prueba en QA
+    ];
+
+
+    $response = Http::withHeaders([
+        'rut'   => '76211240',            
+        'clave' => env('STARKEN_APIKEY'),
+        'Content-Type' => 'application/json',
+    ])->post('https://restservices-qa.starken.cl/apiqa/starkenservices/rest/consultarTarifas', $params);
+
+    if ($response->successful()) {
+        dd($response->json()); // Muestro toda la respuesta para ver tarifas
+    } else {
+        dd([
+            'status' => $response->status(),
+            'body' => $response->body()
+        ]);
+    }
+}
+
+public function testCiudadesOrigen()
+{
+    // Hacer la petición GET a la API de Starken
+    $response = Http::withHeaders([
+        'rut'   => '76211240',               // tu RUT de prueba
+        'clave' => env('STARKEN_APIKEY'),    // tu API key
+        'Content-Type' => 'application/json',
+    ])->get('https://restservices-qa.starken.cl/apiqa/starkenservices/rest/listarCiudadesOrigen');
+
+    // Revisar la respuesta
+    if ($response->successful()) {
+        // Mostrar todas las ciudades en formato JSON
+        dd($response->json());
+    } else {
+        // Mostrar error si la llamada falla
+        dd([
+            'status' => $response->status(),
+            'body'   => $response->body()
+        ]);
+    }
+}
+
+
+
 
 }
 

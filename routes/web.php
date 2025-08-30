@@ -112,9 +112,18 @@ Route::match(['get', 'post'], 'flow/retorno', [CheckoutController::class, 'flowR
 Route::match(['get', 'post'], 'flow/confirmacion', [CheckoutController::class, 'flowConfirmation']);
 
 
+Route::post('/checkout/calcular-tarifa', [CheckoutController::class, 'calcularTarifa'])->name('checkout.calcularTarifa');
+
 //*** Fin Ruta CheckOut */
 
 
 ///*** Ruta Activacion de cuenta */
 Route::get('/activar-cuenta/{token}', [AuthController::class, 'activateAccount'])->name('activate.account');
 ///*** Fin Ruta Activacion de cuenta */
+
+
+// test 
+
+Route::get('/test-tarifa', [CheckoutController::class, 'testTarifaStarken']);
+
+Route::get('/test-ciudades-origen', [CheckoutController::class, 'testCiudadesOrigen']);

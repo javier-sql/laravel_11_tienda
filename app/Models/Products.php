@@ -14,7 +14,11 @@ class Products extends Model
         'image',
         'category_id',
         'brand_id',
-        'user_id'
+        'user_id',
+        'weight',  
+        'length',   
+        'width',    
+        'height'    
     ];
 
     public function category()

@@ -10,12 +10,6 @@ class CartController extends Controller
 
 public function addToCart($id, Request $request)
 {
-    Log::debug('addToCart called', [
-        'ajax' => $request->ajax(),
-        'method' => $request->method(),
-        'expectsJson' => $request->expectsJson(),
-    ]);
-
     $product = Products::findOrFail($id);
     $cart = session()->get('cart', []);
 
@@ -33,10 +27,16 @@ public function addToCart($id, Request $request)
         $cart[$id]['quantity']++;
     } else {
         $cart[$id] = [
+            "id" => $product->id,
             "name" => $product->name,
             "price" => $product->price,
-            "quantity" => 1
+            "quantity" => 1,
+            "weight" => $product->weight,
+            "height" => $product->height,
+            "length" => $product->length,
+            "width" => $product->width,
         ];
+
     }
 
     session()->put('cart', $cart);
@@ -47,38 +47,20 @@ public function addToCart($id, Request $request)
         $totalPrice += $item['price'] * $item['quantity'];
     }
 
+
     if ($request->expectsJson()) {
         return response()->json([
             'success' => 'Producto agregado al carrito',
-            'cart_count' => array_sum(array_column(session('cart'), 'quantity')),
+            'cart_count' => $totalQuantity,
             'total_price' => $totalPrice
         ]);
-
     }
 
+    return redirect()->back();
 }
 
-
-
-    public function viewCart()
-    {
-        return view('pages.cart');
-    }
-
-    public function removeFromCart($id)
-    {
-        $cart = session()->get('cart', []);
-
-        if (isset($cart[$id])) {
-            unset($cart[$id]);
-            session()->put('cart', $cart);
-        }
-
-        return redirect()->back()->with('success', 'Producto eliminado del carrito');
-    }
-
-    public function clearCart(Request $request)
-    {
+public function clearCart(Request $request)
+{
         Log::debug('borrando)');
         // Recibir desde query string
         $success = $request->query('success') === '1';
@@ -91,11 +73,34 @@ public function addToCart($id, Request $request)
         
         session()->forget('cart');
         return redirect()->back()->with('success', 'Carrito vaciado correctamente');
+}
+
+public function viewCart(Request $request)
+{
+    $success = $request->query('success'); // viene de Flow
+    $message = $request->query('message') ?? '';
+
+    return view('pages.cart')->with([
+        'success' => $success === '2' ? $message : null,
+        'error' => $success === '0' ? $message : null,
+    ]);
+}
+
+
+public function removeFromCart($id)
+    {
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+            session()->put('cart', $cart);
+        }
+
+        return redirect()->back()->with('success', 'Producto eliminado del carrito');
     }
 
 
-
-    public function decreaseFromCartAjax(Request $request)
+public function decreaseFromCartAjax(Request $request)
     {
         $id = $request->input('id');
         $cart = session()->get('cart', []);

@@ -1,1 +1,3 @@
-<h1>Pie de pagina</h1>
+<footer class="footer">
+    <p>© 2025 www.ross---.</p>
+</footer>

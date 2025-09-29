@@ -2,93 +2,132 @@
 
 @section('content')
 <div class="container">
+    
     <h2>Checkout</h2>
 
-    {{-- Formulario principal para recoger dirección y ciudad --}}
-    <form id="checkoutForm">
-        <h4>Dirección de envío</h4>
-
-        {{-- Ciudad destino --}}
-        <div class="mb-3">
-            <label for="dest_city">Ciudad destino</label>
-            <select name="dest_city" id="dest_city" class="form-control" required>
-                <option value="">Selecciona ciudad</option>
-                @foreach($destCities as $city)
-                    <option value="{{ $city['codigoCiudad'] }}">
-                        {{ $city['nombreCiudad'] }}
+    <form id="shipping-form">
+        @csrf
+        {{-- Comuna --}}
+        <div class="form-group">
+            <label for="commune">Selecciona tu comuna</label>
+            <select name="commune_id" id="commune" class="form-control" required>
+                <option value="">Seleccionar</option>
+                @foreach(\App\Models\Commune::all() as $commune)
+                    <option value="{{ $commune->id }}" data-price="{{ $commune->price }}">
+                        {{ $commune->name }}
                     </option>
                 @endforeach
             </select>
         </div>
 
         {{-- Calle --}}
-        <div class="mb-3">
+        <div class="form-group mt-2">
             <label for="street">Calle</label>
             <input type="text" name="street" id="street" class="form-control" required>
         </div>
 
         {{-- Número --}}
-        <div class="mb-3">
+        <div class="form-group mt-2">
             <label for="number">Número</label>
             <input type="text" name="number" id="number" class="form-control" required>
         </div>
 
-        {{-- Complemento / depto / referencia --}}
-        <div class="mb-3">
-            <label for="complement">Depto / Casa / Referencia</label>
-            <input type="text" name="complement" id="complement" class="form-control">
+        {{-- Tipo de propiedad --}}
+        <div class="form-group mt-2">
+            <label for="property-type">Tipo de propiedad</label>
+            <select name="property_type" id="property-type" class="form-control" required>
+                <option value="">Seleccionar</option>
+                <option value="dpto">Departamento</option>
+                <option value="casa">Casa</option>
+                <option value="oficina">Oficina</option>
+                <option value="condominio">Condominio</option>
+            </select>
         </div>
 
-        {{-- Tipo de envío --}}
-        <div class="mb-3">
-            <label>
-                <input type="checkbox" name="porPagar" id="porPagar" value="1"> Pagar envío al recibir (por pagar)
-            </label>
+        {{-- Número según tipo --}}
+        <div class="form-group mt-2" id="property-number-group" style="display:none;">
+            <label for="property-number" id="property-number-label"></label>
+            <input type="text" name="property_number" id="property-number" class="form-control">
         </div>
 
-        <h4>Resumen de tu compra</h4>
-        <ul id="cartSummary">
-            @php 
-                $total = 0;
-                $shipping = session('shipping_cost', 0); 
-            @endphp
+        {{-- Número de teléfono --}}
+        <div class="form-group mt-2">
+            <label for="phone">Número de Teléfono de Contacto</label>
+            <input type="text" name="phone" id="phone" class="form-control" required>
+        </div>
 
-            @foreach(session('cart', []) as $item)
-                @php
-                    $subtotal = $item['price'] * $item['quantity'];
-                    $total += $subtotal;
-                @endphp
-                <li>{{ $item['name'] }} (x{{ $item['quantity'] }}) - ${{ $subtotal }}</li>
-            @endforeach
-        </ul>
+        {{-- Valor del envío --}}
+        <div class="form-group mt-3">
+            <label>Valor del envío:</label>
+            <p id="shipping-price">$0</p>
+        </div>
 
-        <h5>Costo de envío: <span id="shippingCost">${{ $shipping }}</span></h5>
-        
-        <h5>Total: <span id="grandTotal">${{ $total + $shipping }}</span></h5>
+        <button type="button" id="confirm-address" class="btn btn-primary mt-2">Confirmar dirección</button>
+    </form>
+</div>
+
+
 
         {{-- Bloque de pago oculto, se muestra cuando la tarifa está calculada --}}
-        <div id="pago" style="display: none; margin-top: 20px;">
-            <h2>Formulario de pago</h2>
-            <form action="{{ route('checkout.process') }}" method="POST">
-                @csrf
+    <div id="pago" style="margin-top: 20px;">
+        <h2>Formulario de pago</h2>
 
-                <div class="mb-3">
-                    <label for="name">Nombre</label>
-                    <input type="text" name="name" required class="form-control"
-                           value="{{ auth()->check() ? auth()->user()->name : '' }}">
-                </div>
+        <table class="table">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @php $total = 0; @endphp
+        @foreach(session('cart', []) as $item)
+            @php $subtotal = $item['price'] * $item['quantity']; $total += $subtotal; @endphp
+            <tr>
+                <td>{{ $item['name'] }}</td>
+                <td>${{ number_format($item['price'], 0, ',', '.') }}</td>
+                <td>{{ $item['quantity'] }}</td>
+                <td>${{ number_format($subtotal, 0, ',', '.') }}</td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
 
-                <div class="mb-3">
-                    <label for="email">Correo electrónico</label>
-                    <input type="email" name="email" required class="form-control"
-                           value="{{ auth()->check() ? auth()->user()->email : '' }}">
-                </div>
+<p>Subtotal productos: $<span id="subtotal-products" data-value="{{ $total }}">{{ number_format($total,0,',','.') }}</span></p>
+<p>Costo envío: $<span id="shipping-total">0</span></p>
+<p><strong>Total a pagar: $<span id="total">{{ number_format($total,0,',','.') }}</span></strong></p>
 
-                <button type="submit" class="btn btn-success">Pagar con Flow</button>
-            </form>
-        </div>
-    </form>
-    <button id="testShippingBtn">aaa</button>
+
+
+
+<form  id="pago" style="display:block" action="{{ route('checkout.process') }}" method="POST">
+            @csrf
+
+            <div class="mb-3">
+                <label for="name">Nombre</label>
+                <input type="text" name="name" required class="form-control"
+                    value="{{ auth()->check() ? auth()->user()->name : '' }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="email">Correo electrónico</label>
+                <input type="email" name="email" required class="form-control"
+                    value="{{ auth()->check() ? auth()->user()->email : '' }}">
+            </div>
+
+            <button type="submit" class="btn btn-success">Pagar con Flow</button>
+        </form>
 </div>
+
+
+
+
+    
+</div>
+
+
+
 
 @endsection

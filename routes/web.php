@@ -10,13 +10,15 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DetailproductController;
 use App\Http\Controllers\CheckoutController;
+use App\Models\Products;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 
 Route::redirect('/','/inicio');
 
 Route::get('/inicio', function () {
-    return view('pages.inicio');
+    $latestProducts = Products::orderBy('updated_at', 'desc')->take(6)->get();
+    return view('pages.inicio', compact('latestProducts'));
 });
 
 // Ruta para mostrar el formulario de inicio de sesión
@@ -95,6 +97,12 @@ Route::get('/clear-cart', [CartController::class, 'clearCart'])->name('cart.clea
 Route::post('/cart/decrease', [CartController::class, 'decreaseFromCartAjax'])->name('cart.decrease.ajax');
 Route::post('/cart/increase', [CartController::class, 'increaseFromCartAjax'])->name('cart.increase.ajax');
 
+
+Route::post('/checkout/save-address', [CheckoutController::class, 'saveAddress'])->name('checkout.saveAddress');
+Route::get('/checkout', [CheckoutController::class, 'view'])->name('checkout.view');
+Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+
+
 //*** Fin ruta Carrito  ***
 
 
@@ -113,6 +121,8 @@ Route::match(['get', 'post'], 'flow/confirmacion', [CheckoutController::class, '
 
 
 Route::post('/checkout/calcular-tarifa', [CheckoutController::class, 'calcularTarifa'])->name('checkout.calcularTarifa');
+Route::get('/ciudades/{region}', [CheckoutController::class, 'getCiudades']);
+Route::get('/sucursales/{ciudadCodigo}', [CheckoutController::class, 'getSucursales']);
 
 //*** Fin Ruta CheckOut */
 
@@ -127,3 +137,6 @@ Route::get('/activar-cuenta/{token}', [AuthController::class, 'activateAccount']
 Route::get('/test-tarifa', [CheckoutController::class, 'testTarifaStarken']);
 
 Route::get('/test-ciudades-origen', [CheckoutController::class, 'testCiudadesOrigen']);
+
+
+Route::get('/test', [CheckoutController::class, 'testNominatim']);

@@ -4,6 +4,16 @@
     <div class="container">
         <h2>Carrito de Compras</h2>
 
+        @if($success)
+            <div class="alert alert-success">{{ $success }}</div>
+        @endif
+
+        @if($error)
+            <div class="alert alert-danger">{{ $error }}</div>
+        @endif
+
+
+
         @if(session('cart') && count(session('cart')) > 0)
 @php $total = 0; @endphp
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Products;
+use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Commune;
@@ -47,7 +47,7 @@ class CheckoutController extends Controller
             $subtotalProducts = 0;
 
             foreach ($cart as $productId => $item) {
-                $product = Products::where('id', $productId)->lockForUpdate()->first();
+                $product = Product::where('id', $productId)->lockForUpdate()->first();
 
                 if (!$product) {
                     DB::rollBack();
@@ -396,7 +396,7 @@ class CheckoutController extends Controller
                 $order->save();
 
                 foreach ($order->items as $item) {
-                    $product = Products::find($item->product_id);
+                    $product = Product::find($item->product_id);
                     if ($product) {
                         $product->stock += $item->quantity;
                         $product->save();

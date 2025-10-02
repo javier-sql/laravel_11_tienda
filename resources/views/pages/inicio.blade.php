@@ -25,7 +25,9 @@
         <div class="products-container-latest">
             @foreach($latestProducts as $product)
                 <div class="product-card-latest">
-                    <img class="img-producto" src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                    <a href="{{ route('product.show', $product->id) }}"> 
+                        <img class="img-producto" src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                    </a>
                     <h3>{{ $product->name }}</h3>
                     <p>${{ number_format($product->price, 0, ',', '.') }}</p>
                     <a href="#" class="btn">Ver producto</a>

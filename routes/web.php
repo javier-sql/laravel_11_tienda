@@ -10,14 +10,14 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DetailproductController;
 use App\Http\Controllers\CheckoutController;
-use App\Models\Products;
+use App\Models\Product;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 
 Route::redirect('/','/inicio');
 
 Route::get('/inicio', function () {
-    $latestProducts = Products::orderBy('updated_at', 'desc')->take(6)->get();
+    $latestProducts = Product::orderBy('updated_at', 'desc')->take(6)->get();
     return view('pages.inicio', compact('latestProducts'));
 });
 
@@ -79,7 +79,7 @@ Route::put('/products/{id}', [ProductoController::class, 'Actualizar'])->name('p
 // *** fin de rutas de administración ***
 
 //*** Rutas de Productos ***
-Route::get('/productos', [ProductoController::class, 'Mostrar'])->name('Mostrar');
+Route::get('/productos', [ProductoController::class, 'Mostrar'])->name('productos');
 
 // *** fin rutas de Productos ***
 

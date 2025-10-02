@@ -3,14 +3,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Models\Products;
+use App\Models\Product;
 
 class CartController extends Controller
 {
 
 public function addToCart($id, Request $request)
 {
-    $product = Products::findOrFail($id);
+    $product = Product::findOrFail($id);
     $cart = session()->get('cart', []);
 
     $currentQuantity = $cart[$id]['quantity'] ?? 0;
@@ -126,7 +126,7 @@ public function decreaseFromCartAjax(Request $request)
         $id = $request->input('id');
         $cart = session()->get('cart', []);
 
-        $product = Products::find($id);
+        $product = Product::find($id);
 
         if (!$product) {
             return response()->json([

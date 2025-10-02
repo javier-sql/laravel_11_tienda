@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Categories;
 use App\Models\Brand;
-use App\Models\Products;
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -43,7 +43,7 @@ class ProductoController extends Controller
 
 
         // Crear el producto
-        Products::create([
+        Product::create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
@@ -60,7 +60,7 @@ class ProductoController extends Controller
 
     public function Editar()
     {
-        $products = Products::all();
+        $products = Product::all();
         $categories = Categories::all();
         $brands = Brand::all();
         return view('adm.edit', compact('categories','brands','products'));
@@ -68,7 +68,7 @@ class ProductoController extends Controller
 
 public function Actualizar(Request $request, $id)
 {
-    $product = Products::findOrFail($id);
+    $product = Product::findOrFail($id);
 
     // Validación básica
     $request->validate([
@@ -108,16 +108,76 @@ public function Actualizar(Request $request, $id)
     
     public function destroy($id)
     {
-        $product = Products::findOrFail($id);
+        $product = Product::findOrFail($id);
         $product->delete();
 
         return redirect()->back()->with('success', 'Producto eliminado correctamente.');
     }
 
-    public function Mostrar()
-    {
-        $products = Products::all();
-        return view('pages.productos', compact('products'));
+
+public function Mostrar(Request $request)
+{
+    $query = Product::query();
+
+    // Búsqueda por texto
+    if ($request->filled('search')) {
+        $query->where('name', 'like', '%' . $request->search . '%');
     }
+
+    // Filtrar categorías
+    $categoryIds = $request->query('category_ids', []);
+    if (!is_array($categoryIds)) {
+        $categoryIds = [$categoryIds];
+    }
+    if (!empty($categoryIds)) {
+        $query->whereIn('category_id', $categoryIds);
+    }
+
+    // Filtrar marcas
+    $brandIds = $request->query('brand_ids', []);
+    if (!is_array($brandIds)) {
+        $brandIds = [$brandIds];
+    }
+    if (!empty($brandIds)) {
+        $query->whereIn('brand_id', $brandIds);
+    }
+
+    // Filtrar precios predefinidos
+    $priceRanges = $request->query('price_ranges', []);
+    if (!empty($priceRanges)) {
+        $query->where(function($q) use ($priceRanges) {
+            foreach ($priceRanges as $range) {
+                switch ($range) {
+                    case '0-5000': $q->orWhereBetween('price', [0, 5000]); break;
+                    case '5000-10000': $q->orWhereBetween('price', [5000, 10000]); break;
+                    case '10000-20000': $q->orWhereBetween('price', [10000, 20000]); break;
+                    case '20000-40000': $q->orWhereBetween('price', [20000, 40000]); break;
+                    case '60000+': $q->orWhere('price', '>=', 60000); break;
+                }
+            }
+        });
+    }
+
+    $products = $query->paginate(12)->withQueryString();
+
+    if ($request->ajax()) {
+        return view('pages.productslist', compact('products'))->render();
+    }
+
+    $categories = Categories::all();
+    $brands = Brand::all();
+
+    return view('pages.productos', compact('products','categories','brands'));
+}
+
+
+
+
+
+
+
+
+
+
 
 }

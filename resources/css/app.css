@@ -236,6 +236,30 @@ body {
 
 }
 
+/* Entre 918px y 1665px → 3 columnas */
+@media (min-width: 918px) and (max-width: 1665px) {
+    .products-container-latest {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .product-card-latest {
+        flex: 0 1 calc(33.333% - 30px); /* 3 por fila */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-sizing: border-box; /* asegura que padding/border no rompa el cálculo */
+    }
+}
+
+
+
+
 /* footer */
 
 .footer {

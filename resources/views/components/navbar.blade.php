@@ -11,8 +11,7 @@
 
 @endphp
 
-
-<nav class="navbar">
+    <nav class="navbar">
     <div class="navbar-container">
         @auth
             <ul class="navbar-group navbar-left">
@@ -74,7 +73,6 @@
                                 <button class="menu-text cursor-pointer" type="submit">Cerrar Sesión</button>
                             </form>
                         </li>
-                        <!-- <li><a href="{{ url('/register') }}">Registrarse</a></li>                 -->
                     </ul>
                 </nav>
             </div>
@@ -99,7 +97,6 @@
                     </a>
                 </li>
                 <li><a class="menu-text" href="{{ url('/login') }}">Iniciar Sesión</a></li>
-                <!-- <li><a href="{{ url('/register') }}">Registrarse</a></li>                 -->
             </ul>
 
             <div class="hamburger" id="hamburger">
@@ -122,7 +119,6 @@
                             </a>
                         </li>
                         <li><a class="menu-text" href="{{ url('/login') }}">Iniciar Sesión</a></li>
-                        <!-- <li><a href="{{ url('/register') }}">Registrarse</a></li>                 -->
                     </ul>
                 </nav>
             </div>

@@ -5,11 +5,17 @@
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
-  font: inherit;
-  line-height: 1;
+html{
+    scrollbar-gutter: stable;
 }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* evita desplazamiento lateral */
+    width: 100%;
+  }
+
 
 a {
   text-decoration: none;
@@ -34,12 +40,15 @@ table {
 
 /* Main */
 
-/* main {
-    margin-top: 90px;
-} */
+main {
+    flex: 1;
+}
 
 body {
     background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* asegura altura completa */
 }
 
 /* Navigation */
@@ -48,7 +57,8 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 90px;
+    max-height: 83px;
+    min-height: 83px;
     background-color: #fff;
     padding: 0 20px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
@@ -166,7 +176,7 @@ body {
     }
 
     .menu-hamburger {
-        position: absolute;
+        position: fixed;
         top: 0;
         right: 0;
         height: 100vh;
@@ -220,9 +230,6 @@ body {
         display: flex;
         flex-wrap: wrap;           /* permite varias filas */
         justify-content: center;   /* centra los items horizontalmente */
-        gap: 20px;                 /* espacio entre productos */
-        padding: 20px;             /* separa del borde de la página */
-        max-width: 1200px;         /* opcional, ancho máximo del contenedor */
         margin: 0 auto;            /* centra el contenedor completo */
     }
 
@@ -263,7 +270,7 @@ body {
 /* footer */
 
 .footer {
-    background-color: #333;       /* fondo */
+    flex-shrink: 0;
     background-color: #fff;
     display: flex;                /* activa flexbox */
     justify-content: center;      /* centra horizontalmente */
@@ -421,38 +428,6 @@ body {
     margin-bottom: 5px;
 }
 
-.products-container {
-  display: flex;
-  justify-content: center;        /* Centra horizontalmente */
-  align-items: flex-start;        /* Alinea arriba */
-  gap: 40px;                      /* Espacio entre filtros y productos */
-  padding: 40px;
-  max-width: 1200px;              /* Ancho máximo para centrar */
-  margin: 0 auto;                 /* Centrado horizontal */
-}
-
-.filter-container {
-  min-width: 270px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
-  height: fit-content;
-}
-
-.products-list {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  flex: 1;
-}
-
-.product-item {
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
-  text-align: center;
-}
-
 /* Carusel */
 
 .carousel {
@@ -519,4 +494,395 @@ body {
   padding: 40px;
   max-width: 1200px;              /* Ancho máximo para centrar */
   margin: 0 auto;                 /* Centrado horizontal */
+  
 }
+
+/* CSS PAGE PRODUCTOS */
+
+.products-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+/* filtros */
+.filter-container {
+  min-width: 270px;
+  max-width: 270px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+  margin-top: 111px;
+}
+
+/* ✅ contenedor para productos + paginación */
+.products-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1128px;
+  min-width: 1128px;
+  margin-top: 111px;
+}
+
+/* lista de productos */
+.products-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+/* producto */
+.product-item {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  max-width: 267px;
+}
+
+/* paginación */
+.pagination {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.products-list .pagination {
+  grid-column: 1 / -1;
+  margin-bottom: 20px; /* espacio entre la paginación y los productos */
+}
+
+.pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    font-family: sans-serif;
+    font-size: 0.85rem;
+}
+
+.pagination-info {
+    margin-bottom: 8px;
+}
+
+.pagination-info span {
+    font-weight: bold;
+}
+
+.pagination-links {
+    display: flex;
+    gap: 4px;
+}
+
+.pagination-links a,
+.pagination-links span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 28px;
+    height: 30px;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+    background-color: #fff;
+}
+
+.pagination-links a:hover {
+    background-color: #eee;
+}
+
+.pagination-links .active {
+    background-color: #333;
+    color: #fff;
+    border-color: #333;
+}
+
+.pagination-links .disabled {
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.category-checkboxes, .brand-checkboxes, .price-checkboxes{
+    max-width: 270px;
+    max-height: 110px; /* o el alto que quieras como límite */
+    overflow-y: auto;  /* activa scroll vertical cuando sea necesario */
+    /* border: 1px solid #ccc; */
+    padding: 5px;            /* un poco de espacio interno */
+    border-radius: 4px;      /* opcional, bordes redondeados */
+}
+
+.price-text, .category-text, .brand-text {
+    display: block;       /* hace que el label respete margin */
+    margin-bottom: 12px;  /* o el espacio que quieras */
+    font-weight: bold;    /* opcional, para resaltar */
+}
+
+.filter-text {
+    text-align: center;
+    padding: 0px;
+    margin-bottom: 15px;
+}
+
+.restablecer-filter {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.search-filter{
+    margin-bottom: 15px;
+}
+
+
+/* Media query para pantallas menores a 1460px */
+@media (max-width: 1460px) {
+.products-container {
+    display: block;       /* columna */
+    text-align: center;   /* centra los elementos inline/inline-block */
+}
+
+.products-section{
+    display: inline-block;   /* permite que el div se ajuste al contenido */
+
+}
+
+.filter-container {
+    display: inline-block;   /* permite que el div se ajuste al contenido */
+    text-align: left;        /* el contenido del filtro queda alineado a la izquierda */
+    min-width: 1128px;
+    height: 230px;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);  /* 4 columnas iguales */
+    grid-template-areas:
+        "filtro filtro filtro filtro"
+        "buscar categoria marca precio"
+        "restablecer restablecer restablecer restablecer";
+    gap: 10px; /* espacio entre celdas */
+}
+
+.filter-text {
+    grid-area: filtro;
+    text-align: center;
+    padding: 0px;
+    margin-bottom: 0px;
+}
+
+.search-filter {
+    grid-area: buscar;
+    align-self: start;
+}
+
+.category-filter {
+    grid-area: categoria;
+}
+
+.brand-filter {
+    grid-area: marca;
+}
+
+.price-filter {
+    grid-area: precio;
+}
+
+.restablecer-filter {
+    grid-area: restablecer;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.category-checkboxes, .brand-checkboxes, .price-checkboxes{
+    max-width: 270px;
+    max-height: 110px; /* o el alto que quieras como límite */
+    overflow-y: auto;  /* activa scroll vertical cuando sea necesario */
+    /* border: 1px solid #ccc; */
+    padding: 5px;            /* un poco de espacio interno */
+    border-radius: 4px;      /* opcional, bordes redondeados */
+}
+
+.price-text, .category-text, .brand-text {
+    display: block;       /* hace que el label respete margin */
+    margin-bottom: 12px;  /* o el espacio que quieras */
+    font-weight: bold;    /* opcional, para resaltar */
+}
+
+
+
+}
+
+@media(max-width:1145px){
+
+    /* .products-container {
+
+    } */
+
+    .filter-container {
+        min-width: 841px;
+    }
+
+    .products-section{
+        max-width: auto;
+        min-width: auto;
+    }
+
+    .products-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* siempre 3 columnas */
+        gap: 20px;
+    }
+
+}
+
+@media(max-width:844px){
+    .filter-container {
+        min-width: 554px;
+    }
+
+        .products-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* siempre 3 columnas */
+        gap: 20px;
+    }
+
+    .filter-container {
+        display: inline-block;   /* permite que el div se ajuste al contenido */
+        text-align: left;        /* el contenido del filtro queda alineado a la izquierda */
+        min-width: 554px;
+        height: 280px;
+    }
+
+    .filters {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);  /* 4 columnas iguales */
+        grid-template-areas:
+            "filtro filtro filtro"
+            "buscar buscar buscar"
+            "categoria marca precio"
+            "restablecer restablecer restablecer";
+        gap: 10px; /* espacio entre celdas */
+    }
+
+    .filter-text {
+        grid-area: filtro;
+        text-align: center;
+        padding: 0px;
+        margin-bottom: 0px;
+    }
+
+    .search-filter {
+        grid-area: buscar;
+        align-self: start;
+    }
+
+    .category-filter {
+        grid-area: categoria;
+    }
+
+    .brand-filter {
+        grid-area: marca;
+    }
+
+    .price-filter {
+        grid-area: precio;
+    }
+
+    .restablecer-filter {
+        grid-area: restablecer;
+        text-align: end;
+        margin-top: 10px;
+    }
+}
+
+
+@media(max-width:580px){
+
+    .filter-container {
+        min-width: 450px;
+    }
+            
+    .products-list {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr); /* siempre 3 columnas */
+        gap: 20px;
+    }
+
+
+
+}
+
+/* Celulares pequeños */
+@media (max-width: 430px) {
+    
+    .category-checkboxes, .brand-checkboxes, .price-checkboxes{
+    max-width: 152px;
+    max-height: 110px; /* o el alto que quieras como límite */
+    overflow-y: auto;  /* activa scroll vertical cuando sea necesario */
+    /* border: 1px solid #ccc; */
+    padding: 5px;            /* un poco de espacio interno */
+    border-radius: 4px;      /* opcional, bordes redondeados */
+    }  
+    .filter-container {
+        min-width: 360px;
+        min-height: 400px;
+        margin-top: 20px;
+    }
+    
+        .filters {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);  /* 4 columnas iguales */
+        grid-template-areas:
+            "filtro filtro"
+            "buscar categoria"
+            "marca precio"
+            "restablecer restablecer";
+        gap: 10px; /* espacio entre celdas */
+    }
+
+    .filter-text {
+        grid-area: filtro;
+        text-align: center;
+        padding: 0px;
+        margin-bottom: 0px;
+    }
+
+    .search-filter {
+        grid-area: buscar;
+    }
+
+    .category-filter {
+        grid-area: categoria;
+        margin-left: -55px;
+    }
+
+    .brand-filter {
+        grid-area: marca;
+    }
+
+    .price-filter {
+        grid-area: precio;
+        margin-left: -55px;
+
+    }
+
+    .restablecer-filter {
+        grid-area: restablecer;
+        text-align: end;
+        margin-top: 10px;
+    }
+
+
+}
+
+
+
+
+/* FIN CSS PAGE PRODUCTOS*/

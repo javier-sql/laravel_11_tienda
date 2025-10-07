@@ -9,12 +9,11 @@
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
 </head>
-<body>
+<body id="admin-page">
     @include('adm.admnavbar')
 
     <div class="contenido">
         @yield('contentADM')
     </div>
-    
 </body>
 </html>

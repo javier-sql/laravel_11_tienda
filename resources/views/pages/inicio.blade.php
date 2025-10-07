@@ -17,8 +17,9 @@
             </div>
         </div>
 
-        <button class="prev">&#10094;</button>
-        <button class="next">&#10095;</button>
+        <button type="button" class="prev">&#10094;</button>
+        <button type="button" class="next">&#10095;</button>
+
     </div>
     <section class="latest-products">
         <h2 class="latest-product-h2">Agregados Recientamente</h2>

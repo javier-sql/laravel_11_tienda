@@ -31,6 +31,8 @@ public function addToCart($id, Request $request)
             "name" => $product->name,
             "price" => $product->price,
             "quantity" => 1,
+            "imagen" => $product->image,
+            "stock" => $product->stock,
             "weight" => $product->weight,
             "height" => $product->height,
             "length" => $product->length,

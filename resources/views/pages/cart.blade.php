@@ -2,8 +2,6 @@
 
 @section('content')
     <div class="container">
-        <h2>Carrito de Compras</h2>
-
         @if($success)
             <div class="alert alert-success">{{ $success }}</div>
         @endif
@@ -13,58 +11,90 @@
         @endif
 
 
-
         @if(session('cart') && count(session('cart')) > 0)
 @php $total = 0; @endphp
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Producto</th>
-            <th>Precio</th>
-            <th>Cantidad</th>
-            <th>Subtotal</th>
-            <th>Acción</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach(session('cart') as $id => $item)
-            @php
-                $subtotal = $item['price'] * $item['quantity'];
-                $total += $subtotal;
-            @endphp
-            <tr id="product-row-{{ $id }}">
-                <td>{{ $item['name'] }}</td>
-                <td>${{ number_format($item['price'], 0, ',', '.') }}</td>
-                <td>
-                    <button 
-                        class="btn btn-sm btn-secondary decrease-btn" 
-                        data-id="{{ $id }}" 
-                        data-url="{{ route('cart.decrease.ajax') }}"
-                    >-</button>
+<div class="cart-container">
 
-                    <span id="quantity-{{ $id }}">{{ $item['quantity'] }}</span>
+    <div class="cart-text">Carrito</div>
 
-                    <button 
-                        class="btn btn-sm btn-primary increase-btn" 
-                        data-id="{{ $id }}" 
-                        data-url="{{ route('cart.increase.ajax') }}"
-                    >+</button>
-                </td>
-                <td id="subtotal-{{ $id }}">${{ $subtotal }}</td>
-                <td>
-                    <a href="{{ route('cart.remove', $id) }}" class="btn btn-danger">Eliminar</a>
-                </td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
+    <div class="summary-text">Resumen de la compra</div>
 
-<h4 id="total-cart">Total: ${{ $total }}</h4>
+                <div class="cart-products-container">
+                    @foreach(session('cart') as $id => $item)
+                            @php
+                                $subtotal = $item['price'] * $item['quantity'];
+                                $total += $subtotal;
+                            @endphp
 
-<a href="{{ route('checkout.view')}}"> <h3>Continuar Compra</h3></a>
+                    <div class="card-image">
+                        <img class="img-producto-card" src="{{ asset('storage/' . $item['imagen']) }}" alt="{{ $item['name'] }}">
+                    </div>
 
-<a href="{{ route('cart.clear') }}" class="btn btn-warning">Vaciar Carrito</a>
+                    <div class="card-name">
+                        {{ $item['name'] }}
+                    </div>
+
+
+
+                    <div class="card-price">
+                        ${{ number_format($item['price'], 0, ',', '.') }}
+                    </div>
+
+                    <div id="product-row-{{ $id }}" class="card-quantity">
+                        <div>                   
+                        
+                        <button 
+                            class="cart-page-btn decrease-btn" 
+                            data-id="{{ $id }}" 
+                            data-url="{{ route('cart.decrease.ajax') }}"
+                        >−</button>
+
+                        <span id="quantity-{{ $id }}" class="cart-quantity-number">{{ $item['quantity'] }}</span>
+
+                        <button 
+                            class="cart-page-btn increase-btn" 
+                            data-id="{{ $id }}" 
+                            data-url="{{ route('cart.increase.ajax') }}"
+                        >+</button>
+</div>
+
+                        <div class="max-stock">Máx Stock {{$item['stock']}}</div>
+                    </div>
+
+
+                    <div>
+                    <div id="subtotal-{{ $id }}">${{ $subtotal }}</div>
+
+                    <a href="{{ route('cart.remove', $id) }}" class="btn btn-danger">Eliminar</a>                        
+                    </div>
+
+
+
+                    @endforeach
+
+
+                </div>
+
+    <div class="cart-resume-container">
+
+        <div id="total-cart" class="cart-total">Total:  ${{ number_format($total, 0, ',', '.') }}</div>
+
+        <div class="cart-checkout">
+            <a href="{{ route('checkout.view')}}"> <h3>Continuar Compra</h3></a>
+        </div>
+        
+        <div class="cart-clear">
+            <a href="{{ route('cart.clear') }}" class="btn btn-warning">Vaciar Carrito</a>
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
         @else
             <p>Tu carrito está vacío.</p>
         @endif

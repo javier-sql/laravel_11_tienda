@@ -128,89 +128,79 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ==== TIENDA / USUARIO ====
     // ==== CARRITO ====
-    function updateCartUI(id, quantity, totalQuantity, price) {
-        const quantityEl = document.getElementById('quantity-' + id);
-        if(quantityEl) quantityEl.innerText = quantity;
+function updateCartUI(id, quantity, totalQuantity, price) {
+    const quantityEl = document.getElementById('quantity-' + id);
+    if (quantityEl) quantityEl.innerText = quantity;
 
-        const subtotalEl = document.getElementById('subtotal-' + id);
-        if(subtotalEl) subtotalEl.innerText = '$' + (price * quantity);
+    const subtotalEl = document.getElementById('subtotal-' + id);
+    if (subtotalEl) subtotalEl.innerText = '$' + (price * quantity).toLocaleString('es-CL');
 
-        document.querySelectorAll('.cart-total-quantity').forEach(span => {
-            span.innerText = totalQuantity > 0 ? `(${totalQuantity})` : '0';
-        });
-
-        updateTotalCart();
-    }
-
-    function updateTotalCart() {
-        let total = 0;
-        document.querySelectorAll('[id^="subtotal-"]').forEach(el => {
-            total += parseFloat(el.innerText.replace('$',''));
-        });
-
-        const totalEl = document.getElementById('total-cart');
-        const totalNav = document.querySelectorAll('.cart-total-price');
-
-        if(totalEl) totalEl.innerText = 'Total: $' + total;
-        totalNav.forEach(p => p.innerText = '$' + total.toLocaleString('es-CL'));
-    }
-
-    document.querySelectorAll('.decrease-btn, .increase-btn').forEach(button => {
-        button.addEventListener('click', function (e) {
-            e.preventDefault();
-            const id = this.dataset.id;
-            const url = this.dataset.url;
-            const priceText = document.querySelector(`#product-row-${id} td:nth-child(2)`).innerText.replace('$','').replace(/\./g,'');
-            const price = parseFloat(priceText);
-
-            fetch(url, {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ id })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success){
-                    updateCartUI(id, data.quantity, data.totalQuantity, price);
-                }
-            });
-        });
+    document.querySelectorAll('.cart-total-quantity').forEach(span => {
+        span.innerText = totalQuantity > 0 ? `(${totalQuantity})` : '0';
     });
 
-    // document.body.addEventListener('click', function(e) {
-    //     const button = e.target.closest('.add-to-cart-btn');
-    //     if (!button) return;
+    updateTotalCart();
+}
 
-    //     e.preventDefault();
-    //     const productId = button.dataset.id;
+function updateTotalCart() {
+    let total = 0;
+    document.querySelectorAll('[id^="subtotal-"]').forEach(el => {
+        total += parseFloat(el.innerText.replace('$', '').replace(/\./g, '').replace(',', '.')) || 0;
+    });
 
-    //     fetch(`/add-to-cart/${productId}`, {
-    //         method: 'POST',
-    //         headers: {
-    //             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json'
-    //         }
-    //     })
-    //     .then(res => res.json())
-    //     .then(data => {
-    //         if(data.success){
-    //             document.querySelectorAll('.cart-total-quantity').forEach(span => {
-    //                 span.innerText = data.cart_count > 0 ? `(${data.cart_count})` : '0';
-    //             });
-    //             document.querySelectorAll('.cart-total-price').forEach(p => {
-    //                 p.innerText = '$' + data.total_price.toLocaleString('es-CL');
-    //             });
-    //         } else if(data.error){
-    //             alert(data.error);
-    //         }
-    //     })
-    //     .catch(err => { console.error(err); alert('Error al agregar al carrito'); });
-    // });
+    const totalEl = document.getElementById('total-cart');
+    const totalNav = document.querySelectorAll('.cart-total-price');
+
+    if (totalEl) totalEl.innerText = 'Total: $' + total.toLocaleString('es-CL');
+    totalNav.forEach(p => p.innerText = '$' + total.toLocaleString('es-CL'));
+}
+
+document.querySelectorAll('.decrease-btn, .increase-btn').forEach(button => {
+    button.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const btn = this;
+        const id = btn.dataset.id;
+        const url = btn.dataset.url;
+
+        // 🔹 Evitamos múltiples clicks mientras se procesa
+        if (btn.disabled) return;
+        btn.disabled = true;
+
+        // 🔹 Obtener el precio del producto
+        const priceEl = btn.closest('.cart-products-container')
+            .querySelectorAll('.card-price')[Array.from(document.querySelectorAll('[id^="product-row-"]')).findIndex(el => el.id === 'product-row-' + id)];
+        const priceText = priceEl.innerText.replace('$', '').replace(/\./g, '');
+        const price = parseFloat(priceText);
+
+        fetch(url, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ id })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                updateCartUI(id, data.quantity, data.totalQuantity, price);
+            } else if(data.error) {
+                alert(data.error);
+            }
+        })
+        .catch(err => {
+            console.error('Error en carrito:', err);
+            alert('Error de servidor, intenta nuevamente');
+        })
+        .finally(() => {
+            btn.disabled = false; // 🔹 Rehabilitamos el botón
+        });
+    });
+});
+
+
 
     // ==== MENÚ RESPONSIVE ====
     const openBtn = document.getElementById('openMenu');
@@ -260,46 +250,58 @@ document.addEventListener('DOMContentLoaded', function () {
         form.addEventListener('change', checkForm);
     }
 
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', function() {
-            const commune_id = document.getElementById('commune').value;
-            const street = document.getElementById('street').value.trim();
-            const number = document.getElementById('number').value.trim();
-            const propertyType = document.getElementById('property-type')?.value; 
-            const propertyNumber = document.getElementById('property-number')?.value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const shipping = parseInt(document.querySelector('#commune option:checked').dataset.price);
+if (confirmBtn) {
+    confirmBtn.addEventListener('click', function() {
+        confirmBtn.disabled = true; // 🔹 Evitamos múltiples clicks
+        confirmBtn.innerText = "Procesando...";
 
-            fetch('/checkout/save-address', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    commune_id, street, number, property_type: propertyType, property_number: propertyNumber, phone, shipping 
-                })
+        const commune_id = document.getElementById('commune').value;
+        const street = document.getElementById('street').value.trim();
+        const number = document.getElementById('number').value.trim();
+        const propertyType = document.getElementById('property-type')?.value; 
+        const propertyNumber = document.getElementById('property-number')?.value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const shipping = parseInt(document.querySelector('#commune option:checked').dataset.price);
+
+        fetch('/checkout/save-address', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                commune_id, street, number, property_type: propertyType, property_number: propertyNumber, phone, shipping 
             })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) {
-                    const paymentForm = document.getElementById('pago');
-                    if(paymentForm) paymentForm.style.display = 'block';
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                const paymentForm = document.getElementById('pago');
+                if(paymentForm) paymentForm.style.display = 'block';
 
-                    const shippingEl = document.getElementById('shipping-total');
-                    if(shippingEl) shippingEl.innerText = shipping.toLocaleString('es-CL');
+                const shippingEl = document.getElementById('shipping-total');
+                if(shippingEl) shippingEl.innerText = shipping.toLocaleString('es-CL');
 
-                    const subtotalEl = document.getElementById('subtotal-products');
-                    const totalEl = document.getElementById('total');
-                    if(subtotalEl && totalEl) {
-                        const subtotal = parseInt(subtotalEl.dataset.value);
-                        totalEl.innerText = (subtotal + shipping).toLocaleString('es-CL');
-                    }
+                const subtotalEl = document.getElementById('subtotal-products');
+                const totalEl = document.getElementById('total');
+                if(subtotalEl && totalEl) {
+                    const subtotal = parseInt(subtotalEl.dataset.value);
+                    totalEl.innerText = (subtotal + shipping).toLocaleString('es-CL');
                 }
-            })
-            .catch(err => console.error('Error guardando dirección:', err));
+            } else if(data.error){
+                alert(data.error);
+            }
+        })
+        .catch(err => {
+            console.error('Error guardando dirección:', err);
+            alert('Error de servidor, intenta nuevamente');
+        })
+        .finally(() => {
+            confirmBtn.disabled = false;
+            confirmBtn.innerText = "Confirmar";
         });
-    }
+    });
+}
 
     // ==== CHECKOUT TIPO PROPIEDAD ====
     const propertyTypeSelect = document.getElementById('property-type');

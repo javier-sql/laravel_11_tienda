@@ -192,7 +192,7 @@ class CheckoutController extends Controller
             ]);
             return response()->json([
                 'success' => false,
-                'error' => 'La dirección no coincide con la comuna seleccionada.'
+                'error' => 'La dirección no coincide con la comuna seleccionada o numero. Si es Avenida comience con "Av." o "Avenida". Si es Pasaje comience con "Pje." o "Pasaje". Si es calle, no use prefijos.'
             ]);
         }
 

@@ -3,7 +3,6 @@
 @section('content')
 <div id="checkout-container" class="checkout-container">
 
-    {{-- Bloque de dirección --}}
 
     <div id="error-message" class="error-message" style="display:none;"></div>
 
@@ -81,6 +80,7 @@
 
             {{-- Bloque de pago oculto, se muestra cuando la tarifa está calculada --}}
 <div id="formulario-pago" class="form-pago-container">
+
     <h2 class="form-pago-title">Formulario de pago</h2>
     <div class="from-pago">
         <table class="table-form-pago">
@@ -115,12 +115,8 @@
             <label class="totales"><strong>Total a pagar: $<span id="total">{{ number_format($total,0,',','.') }}</span></strong></label>
         </div>
 
-
-
-
             <form  class="form-pago" id="pago" action="{{ route('checkout.process') }}" method="POST">
                         @csrf
-
                         <div class="mb-3">
                             <label for="name">Nombre</label>
                             <input type="text" name="name" required class="form-control"
@@ -133,11 +129,11 @@
                                 value="{{ auth()->check() ? auth()->user()->email : '' }}">
                         </div>
 
-                        <button type="submit" class="btn-pago loading" id="btn-pago">
+                        <button type="submit" class="btn-pago" id="btn-pago">
                             <span class="btn-text">Pagar</span>
-                            <span class="spinner loader" style="display: none;"></span>
                         </button>
 
+                        <div id="form-error" class="error-message" style="display:none;"></div>
             </form>
 
             <div class="form-pago-button">
@@ -152,8 +148,6 @@
 
     
 </div>
-
-
 
 
 @endsection

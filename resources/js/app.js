@@ -207,38 +207,6 @@ document.querySelectorAll('.decrease-btn, .increase-btn').forEach(button => {
 });
 
 
-    // // ==== AGREGAR AL CARRITO ====
-    // const addBtn = document.querySelector('.add-to-cart-btn-detail');
-    // if (addBtn) {
-    //     addBtn.addEventListener('click', function() {
-    //         const productId = this.dataset.id;
-    //         fetch(`/add-to-cart/${productId}`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-    //                 'Content-Type': 'application/json',
-    //                 'Accept': 'application/json'
-    //             },
-    //             body: JSON.stringify({ id: productId })
-    //         })
-    //         .then(res => res.json())
-    //         .then(data => {
-    //             if (data.success) {
-    //                 document.querySelectorAll('.cart-total-quantity').forEach(span => {
-    //                 span.innerText = data.cart_count > 0 ? `(${data.cart_count})` : '0';
-    //                 });
-    //                 document.querySelectorAll('.cart-total-price').forEach(p => {
-    //                 p.innerText = '$' + data.total_price.toLocaleString('es-CL');
-    //                 });
-                    
-    //             } else if (data.error) {
-    //                 alert(data.error);
-    //             }
-    //         })
-    //         .catch(err => console.error('Error al agregar al carrito:', err));
-    //     });
-    // }
-
 document.querySelectorAll('.decrease-btn-detail, .increase-btn-detail').forEach(btn => {
     btn.addEventListener('click', async e => {
         e.preventDefault();
@@ -286,8 +254,6 @@ document.querySelectorAll('.decrease-btn-detail, .increase-btn-detail').forEach(
 });
 
 
-
-
     // ==== MENÚ RESPONSIVE ====
     const openBtn = document.getElementById('openMenu');
     const closeBtn = document.getElementById('closeMenu');
@@ -328,8 +294,6 @@ document.querySelectorAll('.decrease-btn-detail, .increase-btn-detail').forEach(
         if (containerfrom) containerfrom.style.display = 'flex';
         if (pagoSection) pagoSection.style.display = 'none';
     });
-
-
 
     // ==== CHECKOUT DIRECCIÓN ====
     const containerfrom = document.getElementById('checkout-container');
@@ -391,7 +355,7 @@ if (confirmBtn) {
         
         confirmBtn.innerHTML = `
             <div class="loading">
-                <div>Confirmando dirección...</div> 
+                <div>Confirmando...</div> 
                 <div class="loader"></div>
             </div>
         `;
@@ -700,22 +664,149 @@ if (buttondetail) {
 
 
 
-    // ==== PAGO ==== //
+// ==== PAGO ==== //
 
-    const formPago = document.getElementById('pago');
-    const btnPago = document.getElementById('btn-pago');
+const formPago = document.getElementById('pago');
+const btnPago = document.getElementById('btn-pago');
+const errorDiv2 = document.getElementById('form-error'); // div para mostrar errores
 
-    if (btnPago) {
-        formPago.addEventListener('submit', function(e) {
-            // Evita doble envío
-            if (btnPago.disabled) {
-                e.preventDefault();
+if (btnPago && formPago) {
+    formPago.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        if (btnPago.disabled) return;
+
+        // Ocultar error previo
+        errorDiv2.style.display = 'none';
+        errorDiv2.textContent = '';
+
+        btnPago.disabled = true;
+        btnPago.querySelector('.btn-text').textContent = 'Procesando...';
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        const payload = {
+            name: formPago.name.value,
+            email: formPago.email.value
+        };
+
+        try {
+            const response = await fetch(formPago.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            let data = {};
+            try {
+                data = await response.json();
+            } catch {
+                throw new Error('Ocurrió un error inesperado.');
+            }
+
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
                 return;
             }
 
-            btnPago.disabled = true; // deshabilita el botón
-            btnPago.querySelector('.btn-text').textContent = 'Procesando...';
-            btnPago.querySelector('.spinner').style.display = 'inline-block';
-        });
-    }
+            if (data.error) {
+                let message = data.error;
+
+                if (data.body) {
+                    try {
+                        const bodyObj = JSON.parse(data.body);
+                        if (bodyObj.message && bodyObj.message.includes('userEmail')) {
+                            // Extraer el correo del mensaje de Flow
+                            const match = bodyObj.message.match(/The userEmail: (.+) is not valid/);
+                            if (match) {
+                                const email = match[1];
+                                message = `El correo "${email}" no es válido.`;
+                            } else {
+                                message = bodyObj.message;
+                            }
+                        } else if (bodyObj.message) {
+                            message = bodyObj.message;
+                        }
+                    } catch {}
+                }
+
+                // Mostrar mensaje de error
+                errorDiv2.textContent = message;
+                errorDiv2.style.display = 'block';
+            }
+
+        } catch (err) {
+            errorDiv2.textContent = err.message || 'Error al procesar la compra.';
+            errorDiv2.style.display = 'block';
+        } finally {
+            btnPago.disabled = false;
+            btnPago.querySelector('.btn-text').textContent = 'Pagar';
+        }
+    });
+}
+// ==== FIN PAGO ==== //
+
+document.addEventListener('click', function(e) {
+    const link = e.target.closest('.pagination a');
+    if (!link) return;
+
+    e.preventDefault();
+    // const url = link.href.replace('http://', 'https://'); // forzar HTTPS
+    const url = new URL(link.getAttribute('href'), window.location.origin).href;
+    const container = document.querySelector('#products-list');
+
+    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.text();
+        })
+        .then(html => container.innerHTML = html)
+        .catch(err => console.error('Error cargando productos:', err));
+});
+
+
+// document.addEventListener('click', function(e) {
+//     const link = e.target.closest('.cart-clear a');
+//     if (!link) return;
+
+//     e.preventDefault(); 
+//     const url = link.href;
+//     const cartContainer = document.querySelector('#cart-container');
+
+//     fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+//         .then(response => response.json())
+//         .then(data => {
+//             if (data.success && cartContainer) {
+//             document.querySelectorAll('.cart-total-quantity').forEach(span => {
+//                 span.innerText = '(0)';
+//             });
+//             document.querySelectorAll('.cart-total-price').forEach(p => {
+//                 p.innerText = '$0';
+//             });
+
+//             // Reemplaza solo la sección de productos del carrito
+//             document.querySelector('.cart-products-container').innerHTML = `
+//                 <div class="empty-cart">
+//                     <p class="empty-title">Tu carrito está vacío.</p>
+//                     <p>Vista nuestros productos. <a class="empty-link" href="/productos">Aquí</a></p>
+//                 </div>
+//             `;
+
+//             } else {
+//                 alert(data.message || 'Carrito vaciado');
+//             }
+//         })
+//         .catch(err => console.error('Error vaciando carrito:', err));
+// });
+
+
+
+
+
+
 });

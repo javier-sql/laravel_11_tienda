@@ -41,8 +41,8 @@
 
         <div class="description-detail">
             <div><strong>Stock disponible:</strong> {{ $product->stock }}</div>
-            <div class="description-detail"><strong>Descripción:</strong></div>
-            <div>{{ $product->description }}</div>
+            <div class="description-detail-title"><strong>Descripción:</strong></div>
+            <div class="description-detail-contenet">{{ $product->description }}</div>
         </div>
 
 

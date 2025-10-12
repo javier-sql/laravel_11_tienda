@@ -149,9 +149,10 @@ class CheckoutController extends Controller
 
             // Crear pago en Flow
             $response = Http::asForm()->post('https://sandbox.flow.cl/api/payment/create', $params);
-
             if ($response->successful()) {
-                return redirect($response->json()['url'] . '?token=' . $response->json()['token']);
+                return response()->json([
+                    'redirect_url' => $response->json()['url'] . '?token=' . $response->json()['token']
+                ]);
             } else {
                 return response()->json([
                     'error' => 'Error al crear pago',
@@ -414,40 +415,6 @@ class CheckoutController extends Controller
             return response('Error', 500);
         }
     }
-
-
-
-    public function testNominatim()
-    {
-        // Dirección de prueba
-        $street = 'Estadio monumental';
-        $city = 'Santiago';
-        $country = 'Chile';
-
-        $query = "$street, $city, $country";
-
-        $response = Http::withHeaders([
-            'User-Agent' => 'consulta'
-        ])->get('https://nominatim.openstreetmap.org/search', [
-            'q' => $query,
-            'format' => 'json',
-            'addressdetails' => 1,
-            'limit' => 1
-        ]);
-
-        $data = $response->json();
-
-        // Verificamos que haya al menos un resultado
-        if (!empty($data)) {
-            $suburb = $data[0]['address']['suburb'] ?? null;
-            dd($suburb); // Esto mostrará "Macul"
-        } else {
-            dd('No se encontraron resultados');
-        }
-
-        //dd($data);
-    }
-
 
 
 }

@@ -3,11 +3,11 @@
 @section('title', 'Registro')
 
 @section('content')
-    <h1>Formulario de Registro</h1>
+    <div class="container-register">
+    <h1>Registro</h1>
 
-    <!-- Mostrar errores de validación -->
     @if ($errors->any())
-        <div>
+        <div class="errors">
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -16,7 +16,6 @@
         </div>
     @endif
 
-    <!-- Formulario de registro -->
     <form method="POST" action="{{ url('/register') }}">
         @csrf
         <div>
@@ -41,4 +40,8 @@
 
         <button type="submit">Registrarse</button>
     </form>
+
+    <p>¿Ya tienes una cuenta? <a href="{{ url('/login') }}">Inicia sesión aquí</a></p>
+</div>
+
 @endsection

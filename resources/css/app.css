@@ -1107,11 +1107,35 @@ body {
 
 /* CSS PAGE CHECKOUT */
 
-.error-message {
+.error-message, .error-message-cart {
     display: none; /* oculto por defecto */
     background-color: #f8d7da; /* rojo suave */
     color: #721c24;
     border: 1px solid #f5c6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-align: center;
+    max-width: 500px;
+}
+
+.div-center{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.error-message-cart{
+    margin-top: 20px;
+    width: 80%;
+}
+
+.success-message{
+    display: none; /* oculto por defecto */
+    background-color: #d7f8da; /* rojo suave */
+    color: #1c7232;
+    border: 1px solid #d7f8da;
     padding: 10px 15px;
     border-radius: 5px;
     margin-bottom: 15px;
@@ -1215,8 +1239,63 @@ body {
     .error-message{
         max-width: 90%;
     }
+
+    /* .btn-confirm-address, .btn-volver, .confirm-btn{
+        font-size: 12px;
+    }
+
+
+.loading {
+    display: flex;          
+    align-items: center;     
+    min-width: 145px;
+    max-width: 1px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
+.confirm-btn{
+ flex-shrink: 1;
+}
+
+.loader{
+   width: 10px; 
+   height: 10px;
+} */
+/* 
+            <div class="loading">
+                <div class="confirm-btn">Confirmando dirección</div> 
+                <div class="loader"></div>
+            </div> */
+}
+
+
+@media(max-width:450px){
+
+    .btn-confirm-address, .btn-volver, .confirm-btn{
+        font-size: 12px;
+    }
+
+
+.loading {
+    display: flex;          
+    align-items: center;     
+    min-width: 104px;
+    max-width: 104px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.confirm-btn{
+ flex-shrink: 1;
+}
+
+.loader{
+   width: 5px;
+   padding: 8px;
+   height: 3px;
+}
+}
 
 .form-pago-container{
     display: flex;
@@ -1304,6 +1383,10 @@ body {
 
     .table-form-pago {
         font-size: 9px;
+    }
+
+    .btn-pago{
+        text-align: center;
     }
 }
 
@@ -1418,7 +1501,16 @@ body {
     grid-area: description;
     align-self: start;
     justify-self: stretch;
+    padding: 10px;
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
+
+.description-detail-title, .description-detail-contenet{
+    margin-top: 10px;
+}
+
+
 
 .carro-link-detail{
     grid-area: carro;
@@ -1435,8 +1527,8 @@ body {
     background-color: #000;
     color: white;
     border-radius: 10px;
-    border: 1px solid black
-
+    border: 1px solid black;
+    cursor: pointer;
 }
 
 .btn-style-black:hover{
@@ -1459,10 +1551,6 @@ body {
     margin-top: 20px;
 }
 
-.description-detail{
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
 
 .controls-detail{
     display: flex;
@@ -1527,7 +1615,757 @@ body {
 }
 
 
-
-
-
 /* FIN CSS PAGE PRODUCT DETAIL */
+
+
+/* CSS SESION*/
+
+/* Contenedor principal */
+.container-login {
+    width: 100%;
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 40px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+}
+
+/* Título */
+.container-login h1 {
+    margin-bottom: 30px;
+    font-size: 2rem;
+    color: #333;
+}
+
+/* Formularios */
+.container-login form div {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.container-login label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+}
+
+.container-login input[type="email"],
+.container-login input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.container-login input[type="email"]:focus,
+.container-login input[type="password"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Botón */
+.container-login button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.container-login button:hover {
+    background-color: #0056b3;
+}
+
+/* Pie de página */
+.container-login p {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.container-login p a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.container-login p a:hover {
+    color: #0056b3;
+}
+
+
+/* FIN CSS SESION*/
+
+/* CSS REGISTRO */
+
+/* Contenedor principal para login y registro */
+.container-login,
+.container-register {
+    width: 100%;
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 40px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+}
+
+/* Títulos */
+.container-login h1,
+.container-register h1 {
+    margin-bottom: 30px;
+    font-size: 2rem;
+    color: #333;
+}
+
+/* Formularios */
+.container-login form div,
+.container-register form div {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.container-login label,
+.container-register label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+}
+
+.container-login input[type="text"],
+.container-login input[type="email"],
+.container-login input[type="password"],
+.container-register input[type="text"],
+.container-register input[type="email"],
+.container-register input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.container-login input:focus,
+.container-register input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Botones */
+.container-login button,
+.container-register button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.container-login button:hover,
+.container-register button:hover {
+    background-color: #0056b3;
+}
+
+/* Pie de página */
+.container-login p,
+.container-register p {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.container-login p a,
+.container-register p a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.container-login p a:hover,
+.container-register p a:hover {
+    color: #0056b3;
+}
+
+/* Errores de validación */
+.container-register .errors,
+.container-login .errors {
+    background-color: #ffe6e6;
+    border: 1px solid #ff9999;
+    color: #cc0000;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+}
+
+
+/* FIN CSS REGISTRO */
+
+/* CSS ADM*/
+/* Contenedor scrollable para móviles */
+.table-container {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+/* Tabla principal */
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+.product-table .table-header {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.product-table th {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Filas */
+.product-table .table-row {
+    transition: background 0.2s;
+}
+
+.product-table .table-row:hover {
+    background-color: #f1f1f1;
+}
+
+/* Celdas */
+.product-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Imagen del producto */
+.product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+/* Botones */
+.btn-edit,
+.btn-delete {
+    padding: 5px 10px;
+    margin: 2px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-edit {
+    background-color: #2196F3;
+}
+
+.btn-edit:hover {
+    background-color: #1976D2;
+}
+
+.btn-delete {
+    background-color: #f44336;
+}
+
+.btn-delete:hover {
+    background-color: #d32f2f;
+}
+
+/* Responsivo para móviles */
+@media screen and (max-width: 768px) {
+    .product-table th,
+    .product-table td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .product-image {
+        width: 40px;
+        height: 40px;
+    }
+
+    .btn-edit,
+    .btn-delete {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+}
+
+/* Opcional: título */
+.page-title {
+    font-family: Arial, sans-serif;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto; 
+    overflow-x: hidden;
+    background-color: rgba(0,0,0,0.5);
+    padding: 20px;
+}
+
+/* Contenido del modal */
+.modal-content {
+    background-color: #fff;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px; /* nunca más grande que la pantalla */
+    box-sizing: border-box; /* padding incluido en width */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Animación */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+/* Botón cerrar */
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: #f44336;
+}
+
+/* Formulario */
+.modal-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Labels */
+.modal-label {
+    margin-top: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+
+.modal-input,
+.modal-number,
+.modal-textarea,
+.modal-select {
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box; 
+    transition: border 0.2s;
+}
+
+.modal-input:focus,
+.modal-number:focus,
+.modal-textarea:focus,
+.modal-select:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+.modal-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Imagen preview */
+.modal-image-preview {
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 100%; /* se ajusta al contenedor */
+    max-width: 150px;
+    height: auto;
+    object-fit: cover;
+}
+
+/* Input file */
+.modal-image-input {
+    margin-top: 10px;
+}
+
+/* Botones */
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    gap: 10px;
+    flex-wrap: wrap; /* evita overflow */
+}
+
+.modal-btn-submit,
+.modal-btn-cancel {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+    color: white;
+}
+
+.modal-btn-submit {
+    background-color: #4CAF50;
+}
+
+.modal-btn-submit:hover {
+    background-color: #45a049;
+}
+
+.modal-btn-cancel {
+    background-color: #f44336;
+}
+
+.modal-btn-cancel:hover {
+    background-color: #e53935;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 20px;
+        width: 100%;
+        margin: 20px auto;
+    }
+
+    .modal-label {
+        font-size: 14px;
+    }
+
+    .modal-input,
+    .modal-number,
+    .modal-textarea,
+    .modal-select {
+        font-size: 13px;
+        padding: 8px;
+    }
+
+    .modal-image-preview {
+        max-width: 120px;
+        height: auto;
+    }
+
+    .modal-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .modal-btn-submit,
+    .modal-btn-cancel {
+        width: 100%;
+    }
+}
+
+.modal-delete {
+    display: none; /* oculto por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto; /* vertical sí */
+    overflow-x: hidden; /* nunca horizontal */
+    background-color: rgba(0,0,0,0.5);
+    padding: 20px;
+}
+
+/* Contenido del modal */
+.modal-content-delete {
+    background-color: #fff;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box; /* padding incluido en width */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    position: relative;
+    animation: fadeInDelete 0.3s ease-in-out;
+    text-align: center;
+}
+
+/* Animación al abrir */
+@keyframes fadeInDelete {
+    from { opacity: 0; transform: translateY(-20px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+/* Botón cerrar */
+.modal-delete-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-delete-close:hover {
+    color: #f44336;
+}
+
+/* Título */
+.modal-delete-title {
+    font-family: Arial, sans-serif;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Texto del modal */
+.modal-delete-text {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #555;
+}
+
+/* Botones del modal */
+.modal-delete-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap; /* evita overflow horizontal */
+}
+
+.modal-btn-delete-confirm,
+.modal-btn-delete-cancel {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+    color: white;
+    min-width: 100px;
+}
+
+.modal-btn-delete-confirm {
+    background-color: #f44336;
+}
+
+.modal-btn-delete-confirm:hover {
+    background-color: #e53935;
+}
+
+.modal-btn-delete-cancel {
+    background-color: #9e9e9e;
+}
+
+.modal-btn-delete-cancel:hover {
+    background-color: #757575;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .modal-content-delete {
+        width: 100%;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .modal-delete-text {
+        font-size: 14px;
+    }
+
+    .modal-btn-delete-confirm,
+    .modal-btn-delete-cancel {
+        width: 100%;
+    }
+}
+
+
+
+
+/* Contenedor principal */
+.container-add-product {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Título */
+.add-product-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Alertas */
+.add-product-alert {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.add-product-alert-item {
+    margin-left: 15px;
+}
+
+/* Formulario */
+.add-product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Grupos de campos */
+.add-product-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Labels */
+.add-product-label {
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Inputs y textarea */
+.add-product-input,
+.add-product-textarea,
+.add-product-select,
+.add-product-file {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border 0.2s;
+}
+
+.add-product-input:focus,
+.add-product-textarea:focus,
+.add-product-select:focus,
+.add-product-file:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+.add-product-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Botones */
+.add-product-btn,
+.add-product-btn-submit {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+    color: white;
+    margin-top: 10px;
+}
+
+.container-buttons-adm{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 5%;
+}
+
+.add-product-btn {
+    background-color: #167bce;
+    max-width: 200px;
+}
+
+.add-product-btn:hover {
+    background-color: #1976D2;
+}
+
+.add-product-btn-submit {
+    background-color: #4CAF50;
+}
+
+.add-product-btn-submit:hover {
+    background-color: #45a049;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .container-add-product {
+        padding: 15px;
+        margin: 15px;
+    }
+
+    .add-product-btn,
+    .add-product-btn-submit {
+        width: 100%;
+    }
+
+    .add-product-input,
+    .add-product-textarea,
+    .add-product-select,
+    .add-product-file {
+        font-size: 13px;
+        padding: 8px;
+    }
+}
+
+
+
+
+/* FIN CSS ADM*/

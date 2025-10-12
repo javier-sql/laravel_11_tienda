@@ -1,54 +1,57 @@
 @extends('adm.administrador')
 @section('title', 'Crear Producto')
 @section('contentADM')
-<div class="container">
-    <h2>Agregar Nuevo Producto</h2>
+
+<div class="container container-add-product">
+    <h2 class="add-product-title">Agregar Nuevo Producto</h2>
 
     <!-- Mostrar mensajes de error de validación -->
     @if ($errors->any())
-        <div class="alert alert-danger">
+        <div class="alert alert-danger add-product-alert">
             <ul>
                 @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
+                    <li class="add-product-alert-item">{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
     @endif
 
-    <form action="{{ route('administrador.Save') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('administrador.Save') }}" method="POST" enctype="multipart/form-data" class="add-product-form">
         @csrf
-        <div class="form-group">
-            <label for="nombre">Nombre del Producto:</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ old('nombre') }}" required>
+        <div class="form-group add-product-group">
+            <label for="nombre" class="add-product-label">Nombre del Producto:</label>
+            <input type="text" class="form-control add-product-input" id="name" name="name" value="{{ old('nombre') }}" required>
         </div>
-        <div class="form-group">
-            <label for="description">Descripción:</label>
-            <textarea class="form-control" id="description" name="description" required>{{ old('description') }}</textarea>
-        </div>
-        <div class="form-group">
-            <label for="price">price:</label>
-            <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ old('price') }}" required>
-        </div>
-        <div class="form-group">
-            <label for="stock">Stock:</label>
-            <input type="number" class="form-control" id="stock" name="stock" value="{{ old('stock') }}" required>
-        </div>
-        <div class="form-group">
-            <label for="imagen">Imagen del Producto:</label>
-            <input type="file" class="form-control-file" id="image" name="image">
-        </div>
-        <!--btn-modal category-->
-        <button type="button" onclick="categoryModal()">
-            Agregar Categoría
-        </button>
-        <!--btn modal category-edit-->
-        <button type="button" onclick="categoryEditModal()">
-            Editar Categoría
-        </button>
 
-        <div class="form-group">
-            <label for="category_id">Categoría:</label>
-            <select class="form-control" id="category_id" name="category_id" required>
+        <div class="form-group add-product-group">
+            <label for="description" class="add-product-label">Descripción:</label>
+            <textarea class="form-control add-product-textarea" id="description" name="description" required>{{ old('description') }}</textarea>
+        </div>
+
+        <div class="form-group add-product-group">
+            <label for="price" class="add-product-label">Precio:</label>
+            <input type="number" step="0.01" class="form-control add-product-input" id="price" name="price" value="{{ old('price') }}" required>
+        </div>
+
+        <div class="form-group add-product-group">
+            <label for="stock" class="add-product-label">Stock:</label>
+            <input type="number" class="form-control add-product-input" id="stock" name="stock" value="{{ old('stock') }}" required>
+        </div>
+
+        <div class="form-group add-product-group">
+            <label for="imagen" class="add-product-label">Imagen del Producto:</label>
+            <input type="file" class="form-control-file add-product-file" id="image" name="image">
+        </div>
+
+        <!-- Botones de categoría -->
+        <div class="container-buttons-adm">
+            <button type="button" class="btn add-product-btn" onclick="categoryModal()">Agregar Categoría</button>
+            <button type="button" class="btn add-product-btn" onclick="categoryEditModal()">Editar Categoría</button>
+        </div>
+
+        <div class="form-group add-product-group">
+            <label for="category_id" class="add-product-label">Categoría:</label>
+            <select class="form-control add-product-select" id="category_id" name="category_id" required>
                 <option value="">Seleccione una categoría</option>
                 @foreach ($categories as $category)
                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -56,27 +59,27 @@
             </select>
         </div>
 
-        <button type="button" onclick="marcaModal()">
-            Agregar Marca
-        </button>
-        <button type="button" onclick="openModalBrandEdit()">
-            Editar Marca
-        </button>
-        <!--modal brand-->
-        <div class="form-group">
-            <label for="brand_id">Marca:</label>
-            <select class="form-control" id="brand_id" name="brand_id" required>
+        <!-- Botones de marca -->
+         <div class="container-buttons-adm">
+            <button type="button" class="btn add-product-btn" onclick="marcaModal()">Agregar Marca</button>
+            <button type="button" class="btn add-product-btn" onclick="openModalBrandEdit()">Editar Marca</button>
+         </div>
+
+        <div class="form-group add-product-group">
+            <label for="brand_id" class="add-product-label">Marca:</label>
+            <select class="form-control add-product-select" id="brand_id" name="brand_id" required>
                 <option value="">Seleccione una marca</option>
                 @foreach ($brands as $brand)
                     <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                 @endforeach
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Guardar Producto</button>
-    </form>
 
-    
+        <button type="submit" class="btn btn-primary add-product-btn-submit">Guardar Producto</button>
+    </form>
 </div>
+
+
 <!-- Modal category-add -->
 <div id="category-modal" class="modal">
     <div class="modal-content">

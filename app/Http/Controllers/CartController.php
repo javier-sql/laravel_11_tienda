@@ -62,21 +62,50 @@ public function addToCart($id, Request $request)
     return redirect()->back();
 }
 
+// public function clearCart(Request $request)
+// {
+//         Log::debug('borrando)');
+//         // Recibir desde query string
+//         $success = $request->query('success') === '1';
+//         $message = $request->query('message', '');
+
+//         if ($success) {
+//             session()->forget('cart');
+//             return view('flow.return', compact('success', 'message'));
+//         }
+        
+//         session()->forget('cart');
+//         return redirect()->back()->with('success', 'Carrito vaciado correctamente');
+// }
+
 public function clearCart(Request $request)
 {
-        Log::debug('borrando)');
-        // Recibir desde query string
-        $success = $request->query('success') === '1';
-        $message = $request->query('message', '');
+    Log::debug('Borrando carrito');
 
-        if ($success) {
-            session()->forget('cart');
-            return view('flow.return', compact('success', 'message'));
-        }
-        
-        session()->forget('cart');
-        return redirect()->back()->with('success', 'Carrito vaciado correctamente');
+    session()->forget('cart');
+
+    if ($request->ajax()) {
+        // Renderizamos el HTML actualizado del carrito
+        $html = view('pages.cart')->render();
+
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+            'message' => 'Carrito vaciado correctamente'
+        ]);
+    }
+
+    // Lógica original para requests normales
+    $success = $request->query('success') === '1';
+    $message = $request->query('message', '');
+
+    if ($success) {
+        return view('flow.return', compact('success', 'message'));
+    }
+
+    return redirect()->back()->with('success', 'Carrito vaciado correctamente');
 }
+
 
 public function viewCart(Request $request)
 {
@@ -103,28 +132,6 @@ public function removeFromCart($id)
     }
 
 
-// public function decreaseFromCartAjax(Request $request)
-// {
-//     $id = $request->input('id');
-//     $cart = session()->get('cart', []);
-
-//     if (isset($cart[$id]) && $cart[$id]['quantity'] > 1) {
-//         $cart[$id]['quantity']--;
-//         session()->put('cart', $cart);
-//     }
-
-//     $totalQuantity = array_sum(array_column($cart, 'quantity'));
-//     $totalPrice = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $cart));
-
-//     $productQuantity = $cart[$id]['quantity'] ?? 0; // importante, cantidad del producto
-
-//     return response()->json([
-//         'success' => true,
-//         'product_quantity' => $productQuantity, // ahora sí existe
-//         'cart_count' => $totalQuantity,
-//         'total_price' => $totalPrice
-//     ]);
-// }
 
 
 public function increaseFromCartAjax(Request $request)
@@ -180,13 +187,6 @@ public function increaseFromCartAjax(Request $request)
     ]);
 }
 
-//         'success' => true,
-//         'quantity' => $cart[$id]['quantity'],
-//         'totalQuantity' => $totalQuantity,
-//         'cart_count' => $totalQuantity,
-//         'total_price' => $totalPrice
-
-
 public function decreaseFromCartAjax(Request $request)
     {
         $id = $request->input('id');
@@ -216,47 +216,6 @@ public function decreaseFromCartAjax(Request $request)
         ]);
     }
 
-
-// public function increaseFromCartAjax(Request $request)
-// {
-//     $id = $request->input('id');
-//     $cart = session()->get('cart', []);
-
-//     $product = Product::find($id);
-//     if (!$product) {
-//         return response()->json([
-//             'success' => false,
-//             'message' => 'Producto no encontrado',
-//         ], 404);
-//     }
-
-//     $currentQuantity = $cart[$id]['quantity'] ?? 0;
-
-//     if ($currentQuantity < $product->stock) {
-//         $cart[$id]['quantity'] = $currentQuantity + 1;
-//         session()->put('cart', $cart);
-//     } else {
-//         return response()->json([
-//             'success' => false,
-//             'quantity' => $currentQuantity,
-//             'message' => 'No hay más stock disponible'
-//         ]);
-//     }
-
-//     $totalQuantity = array_sum(array_column($cart, 'quantity'));
-//     $totalPrice = 0;
-//     foreach ($cart as $item) {
-//         $totalPrice += $item['price'] * $item['quantity'];
-//     }
-
-//     return response()->json([
-//         'success' => true,
-//         'quantity' => $cart[$id]['quantity'],
-//         'totalQuantity' => $totalQuantity,
-//         'cart_count' => $totalQuantity,
-//         'total_price' => $totalPrice
-//     ]);
-// }
 
 
 

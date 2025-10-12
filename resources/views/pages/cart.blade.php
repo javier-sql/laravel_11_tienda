@@ -1,18 +1,28 @@
 @extends('layouts.layout')
 
 @section('content')
-    <div class="container">
+    @php
+        $success = $success ?? null;
+        $error = $error ?? null;
+    @endphp
+
+
+    <div id="cart-container" class="container">
         @if($success)
-            <div class="alert alert-success">{{ $success }}</div>
+            <div class="div-center">
+                <div class="success-message">{{ $success }}</div>
+            </div>
         @endif
 
         @if($error)
-            <div class="alert alert-danger">{{ $error }}</div>
+            <div class="div-center">
+                <div class="error-message-cart" style="display: block;">Pago Rechazado</div>
+            </div>
         @endif
-
+        <div class="error-message">Pago Rechazado</div>
 
         @if(session('cart') && count(session('cart')) > 0)
-@php $total = 0; @endphp
+        @php $total = 0; @endphp
         <div class="cart-container">
             <div class="cart-text">Carrito</div>
             <div class="summary-text">Resumen de la compra</div>

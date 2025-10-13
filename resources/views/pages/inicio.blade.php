@@ -10,10 +10,10 @@
                 <img src="{{ asset('storage/page/fondoazul.jpg') }}" alt="Imagen 1">
             </div>
             <div class="carousel-item">
-                <img src="{{ asset('storage/page/fondoamarillo.jpg') }}" alt="Imagen 1">
+                <img src="{{ asset('storage/page/fondoamarillo.jpg') }}" alt="Imagen 2">
             </div>
             <div class="carousel-item">
-                <img src="{{ asset('storage/page/fondonaranja.jgp') }}" alt="Imagen 1">
+                <img src="{{ asset('storage/page/fondonaranja.jpg') }}" alt="Imagen 3">
             </div>
         </div>
 

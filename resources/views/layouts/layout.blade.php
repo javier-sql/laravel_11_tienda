@@ -9,7 +9,7 @@
     <!-- <link rel="stylesheet" href="{{ asset('build/assets/app.css') }}">
     <script src="{{ asset('build/assets/app.js') }}" defer></script> -->
 
-     @vite('resources/css/app.css')
+    @vite('resources/css/app.css')
     @vite('resources/js/app.js') 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.8.0/nouislider.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.8.0/nouislider.min.js"></script>

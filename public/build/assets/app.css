@@ -1,0 +1,1616 @@
+/* Reset CSS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* html{
+    scrollbar-gutter: stable;
+} */
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* evita desplazamiento lateral */
+    width: 100%;
+  }
+
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button, input, textarea, select {
+  font: inherit;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Main */
+
+main {
+    flex: 1;
+}
+
+body {
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* asegura altura completa */
+}
+
+/* Navigation */
+
+.navbar {
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-height: 83px;
+    min-height: 83px;
+    background-color: #fff;
+    padding: 0 20px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    height: 100%;
+}
+
+.navbar-group {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+}
+
+.navbar-group li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.navbar-left {
+    justify-content: flex-start;
+}
+
+.navbar-center {
+    justify-content: center;
+}
+
+.navbar-right {
+    justify-content: flex-end;
+}
+
+.logo{
+    width: 77px;
+    height: 80px;
+}
+
+.carro{
+    width: 45px;
+    height: 45px;
+    margin-right: 5px;
+}
+
+.cerrar{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.menu-text {
+    position: relative;
+    display: inline-block; 
+    text-decoration: none;
+    color: inherit;
+    padding-bottom: 2px;
+    font-size: 19px;
+}
+
+.menu-text::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 4px;
+    color: #e8a739;
+    background-color: currentColor;
+    transition: width 0.3s ease-in-out;
+}
+
+.menu-text:hover::after {
+    width: 100%;
+}
+
+.hamburger {
+    display: none;
+}
+
+.menu-hamburger{
+    display: none;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.font-size{
+    font-size: 19px;
+}
+
+*{
+    font-family: 'Poppins', sans-serif;
+}
+
+@media (max-width: 917px) {
+    .navbar-left, .navbar-right {
+        display: none;
+    }
+    .navbar-center {
+        justify-content: flex-start;
+    }
+    .hamburger {
+        display: block;
+        font-size: 21px;
+    }
+
+    .menu-hamburger {
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100vh;
+        width: 50%;
+        background-color: #fff;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        transform: translateX(100%); /* Oculto: fuera de pantalla hacia la derecha */
+        transition: transform 0.3s ease-in-out;
+        z-index: 9999;
+    }
+
+    .hamburger button {
+        cursor: pointer;
+    }
+
+    .menu-hamburger.active {      
+        transform: translateX(0); /* Se mueve hacia la izquierda, mostrando el menú */
+    }
+
+    #closeMenu{
+        margin-top: 20px;
+        margin-left: 20px;
+    }
+
+    #openMenu, #closeMenu {
+        font-size: 24px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    #openMenu:hover, #closeMenu:hover {
+        transform: scale(1.2);
+        color: #e8a739;
+    }
+
+    .hamburger-container{
+        display: flex;
+        justify-content: center;
+        margin-top: 35px;
+    }
+
+    .hamburger-list{
+        margin-bottom: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .products-container-latest {
+        display: flex;
+        flex-wrap: wrap;           /* permite varias filas */
+        justify-content: center;   /* centra los items horizontalmente */
+        margin: 0 auto;            /* centra el contenedor completo */
+    }
+
+    .product-card-latest {
+        flex: 0 1 calc(50% - 30px); /* 2 por fila, ajustando por la mitad del gap */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+
+}
+
+/* Entre 918px y 1665px → 3 columnas */
+@media (min-width: 918px) and (max-width: 1665px) {
+    .products-container-latest {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .product-card-latest {
+        flex: 0 1 calc(33.333% - 30px); /* 3 por fila */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-sizing: border-box; /* asegura que padding/border no rompa el cálculo */
+    }
+}
+
+
+
+
+/* footer */
+
+.footer {
+    flex-shrink: 0;
+    background-color: #fff;
+    display: flex;                /* activa flexbox */
+    justify-content: center;      /* centra horizontalmente */
+    align-items: center;          /* centra verticalmente */
+    height: 150px;                 /* altura del footer */
+    font-size: 17px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+/* fin footer */
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    transition: opacity 0.3s ease;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 8% auto;
+    padding: 20px;
+    border-radius: 6px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.edit-btn {
+    padding: 5px 10px;
+    background-color: #3490dc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
+#cart-total-quantity{
+    position: absolute;
+    top: 0;
+}
+
+
+/* CSS - PRODUCTOS */
+
+
+
+.img-carroadd {
+    width: 25px;
+    height: 25px;
+}
+
+/* Estado normal */
+.btn-carroadd {
+    background: none;
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover sobre toda la tarjeta → botón gris */
+.product-item:hover .btn-carroadd {
+    background-color: #ccc; /* gris */
+}
+
+/* Hover sobre el botón */
+.product-item:hover .btn-carroadd:hover {
+    background-color: #e8a739; 
+}
+
+/* Signo + oculto por defecto */
+.btn-carroadd::after {
+    cursor: pointer;
+    content: "+"; /* texto */
+    position: absolute;
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    transform: translateX(11px) translateY(-7px);
+}
+
+/* Cuando el mouse esté sobre el botón → mostrar + */
+.btn-carroadd:hover::after {
+    opacity: 1;
+}
+.product-details{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.product-price{
+    justify-content: flex-start;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;    
+}
+
+.img-producto{
+    width: 245px;
+    height: 245px;
+    object-fit: cover;
+}
+
+.filter-text{
+    padding: 23px 30px;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.text-filter{
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+/* Carusel */
+
+.carousel {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 475px;
+    overflow: hidden; 
+}
+
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.carousel-item {
+    min-width: 100%;
+    position: relative;
+}
+
+.carousel-item img {
+    width: 100%;
+    display: block;
+}
+
+/* Botones */
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    border-radius: 50%;
+}
+
+.prev { left: 10px; }
+.next { right: 10px; }
+
+.prev:hover, .next:hover {
+    background: rgba(0,0,0,0.8);
+}
+/* Fin carusel */
+
+
+.latest-product-h2{
+    text-align: center;
+    margin-top: 40px;
+    font-size: 28px;
+    color: #333;
+    font-weight: 600;
+}
+
+
+.products-container-latest {
+  display: flex;
+  justify-content: center;        /* Centra horizontalmente */
+  align-items: flex-start;        /* Alinea arriba */
+  gap: 40px;                      /* Espacio entre filtros y productos */
+  padding: 40px;
+  max-width: 1200px;              /* Ancho máximo para centrar */
+  margin: 0 auto;                 /* Centrado horizontal */
+  
+}
+
+/* CSS PAGE PRODUCTOS */
+
+/* Estado deshabilitado */
+.btn-carroadd:disabled {
+    cursor: not-allowed;
+    background-color: transparent; /* quitar color */
+}
+
+/* Evitar hover naranja cuando está deshabilitado */
+.btn-carroadd:disabled:hover {
+    background-color: #ccc !important; /* !important asegura que sobreescriba el hover original */
+}
+
+/* Ocultar el + cuando está deshabilitado */
+.btn-carroadd:disabled::after {
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+
+.products-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+/* filtros */
+.filter-container {
+  min-width: 270px;
+  max-width: 270px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+  margin-top: 111px;
+}
+
+/* ✅ contenedor para productos + paginación */
+.products-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1128px;
+  min-width: 1128px;
+  margin-top: 111px;
+  margin-bottom: 50px;
+}
+
+/* lista de productos */
+.products-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+/* producto */
+.product-item {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  max-width: 267px;
+}
+
+/* paginación */
+.pagination {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.products-list .pagination {
+  grid-column: 1 / -1;
+  margin-bottom: 20px; /* espacio entre la paginación y los productos */
+}
+
+.pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    font-family: sans-serif;
+    font-size: 0.85rem;
+}
+
+.pagination-info {
+    margin-bottom: 8px;
+}
+
+.pagination-info span {
+    font-weight: bold;
+}
+
+.pagination-links {
+    display: flex;
+    gap: 4px;
+}
+
+.pagination-links a,
+.pagination-links span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 28px;
+    height: 30px;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+    background-color: #fff;
+}
+
+.pagination-links a:hover {
+    background-color: #eee;
+}
+
+.pagination-links .active {
+    background-color: #333;
+    color: #fff;
+    border-color: #333;
+}
+
+.pagination-links .disabled {
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.category-checkboxes, .brand-checkboxes, .price-checkboxes{
+    max-width: 270px;
+    max-height: 110px; /* o el alto que quieras como límite */
+    overflow-y: auto;  /* activa scroll vertical cuando sea necesario */
+    /* border: 1px solid #ccc; */
+    padding: 5px;            /* un poco de espacio interno */
+    border-radius: 4px;      /* opcional, bordes redondeados */
+}
+
+.price-text, .category-text, .brand-text {
+    display: block;       /* hace que el label respete margin */
+    margin-bottom: 12px;  /* o el espacio que quieras */
+    font-weight: bold;    /* opcional, para resaltar */
+}
+
+.filter-text {
+    text-align: center;
+    padding: 0px;
+    margin-bottom: 15px;
+}
+
+.restablecer-filter {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.search-filter{
+    margin-bottom: 15px;
+}
+
+
+/* Media query para pantallas menores a 1460px */
+@media (max-width: 1460px) {
+.products-container {
+    display: block;       /* columna */
+    text-align: center;   /* centra los elementos inline/inline-block */
+}
+
+.products-section{
+    display: inline-block;   /* permite que el div se ajuste al contenido */
+
+}
+
+.filter-container {
+    display: inline-block;   /* permite que el div se ajuste al contenido */
+    text-align: left;        /* el contenido del filtro queda alineado a la izquierda */
+    min-width: 1128px;
+    height: 230px;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);  /* 4 columnas iguales */
+    grid-template-areas:
+        "filtro filtro filtro filtro"
+        "buscar categoria marca precio"
+        "restablecer restablecer restablecer restablecer";
+    gap: 10px; /* espacio entre celdas */
+}
+
+.filter-text {
+    grid-area: filtro;
+    text-align: center;
+    padding: 0px;
+    margin-bottom: 0px;
+}
+
+.search-filter {
+    grid-area: buscar;
+    align-self: start;
+}
+
+.category-filter {
+    grid-area: categoria;
+}
+
+.brand-filter {
+    grid-area: marca;
+}
+
+.price-filter {
+    grid-area: precio;
+}
+
+.restablecer-filter {
+    grid-area: restablecer;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.category-checkboxes, .brand-checkboxes, .price-checkboxes{
+    max-width: 270px;
+    max-height: 110px; /* o el alto que quieras como límite */
+    overflow-y: auto;  /* activa scroll vertical cuando sea necesario */
+    /* border: 1px solid #ccc; */
+    padding: 5px;            /* un poco de espacio interno */
+    border-radius: 4px;      /* opcional, bordes redondeados */
+}
+
+.price-text, .category-text, .brand-text {
+    display: block;       /* hace que el label respete margin */
+    margin-bottom: 12px;  /* o el espacio que quieras */
+    font-weight: bold;    /* opcional, para resaltar */
+}
+
+
+
+}
+
+@media(max-width:1145px){
+
+    /* .products-container {
+
+    } */
+
+    .filter-container {
+        min-width: 841px;
+    }
+
+    .products-section{
+        max-width: auto;
+        min-width: auto;
+    }
+
+    .products-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* siempre 3 columnas */
+        gap: 20px;
+    }
+
+}
+
+@media(max-width:844px){
+    .filter-container {
+        min-width: 554px;
+    }
+
+        .products-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* siempre 3 columnas */
+        gap: 20px;
+    }
+
+    .filter-container {
+        display: inline-block;   /* permite que el div se ajuste al contenido */
+        text-align: left;        /* el contenido del filtro queda alineado a la izquierda */
+        min-width: 554px;
+        height: 280px;
+    }
+
+    .filters {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);  /* 4 columnas iguales */
+        grid-template-areas:
+            "filtro filtro filtro"
+            "buscar buscar buscar"
+            "categoria marca precio"
+            "restablecer restablecer restablecer";
+        gap: 10px; /* espacio entre celdas */
+    }
+
+    .filter-text {
+        grid-area: filtro;
+        text-align: center;
+        padding: 0px;
+        margin-bottom: 0px;
+    }
+
+    .search-filter {
+        grid-area: buscar;
+        align-self: start;
+    }
+
+    .category-filter {
+        grid-area: categoria;
+    }
+
+    .brand-filter {
+        grid-area: marca;
+    }
+
+    .price-filter {
+        grid-area: precio;
+    }
+
+    .restablecer-filter {
+        grid-area: restablecer;
+        text-align: end;
+        margin-top: 10px;
+    }
+}
+
+
+@media(max-width:580px){
+
+    .filter-container {
+        min-width: 450px;
+    }
+            
+    .products-list {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr); /* siempre 3 columnas */
+        gap: 20px;
+    }
+
+
+
+}
+
+/* Celulares pequeños */
+@media (max-width: 430px) {
+    
+    .category-checkboxes, .brand-checkboxes, .price-checkboxes{
+    max-width: 152px;
+    max-height: 110px; /* o el alto que quieras como límite */
+    overflow-y: auto;  /* activa scroll vertical cuando sea necesario */
+    /* border: 1px solid #ccc; */
+    padding: 5px;            /* un poco de espacio interno */
+    border-radius: 4px;      /* opcional, bordes redondeados */
+    }  
+    .filter-container {
+        min-width: 360px;
+        min-height: 400px;
+        margin-top: 20px;
+    }
+    
+        .filters {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); 
+        grid-template-areas:
+            "filtro filtro"
+            "buscar categoria"
+            "marca precio"
+            "restablecer restablecer";
+        gap: 10px; /* espacio entre celdas */
+    }
+
+    .filter-text {
+        grid-area: filtro;
+        text-align: center;
+        padding: 0px;
+        margin-bottom: 0px;
+    }
+
+    .search-filter {
+        grid-area: buscar;
+    }
+
+    .category-filter {
+        grid-area: categoria;
+        margin-left: -55px;
+    }
+
+    .brand-filter {
+        grid-area: marca;
+    }
+
+    .price-filter {
+        grid-area: precio;
+        margin-left: -55px;
+
+    }
+
+    .restablecer-filter {
+        grid-area: restablecer;
+        text-align: end;
+        margin-top: 10px;
+    }
+
+
+}
+
+
+
+
+/* FIN CSS PAGE PRODUCTOS*/
+
+
+/* CSS PAGE CARRITO */
+
+.cart-container{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); 
+    grid-template-areas: "carro carro carro carro carro resumen resumen"
+                         "products-container products-container products-container products-container products-container total total"   
+
+    ;
+    max-width: 1280px;
+    margin: 0 auto;
+    gap: 20px;
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+
+.cart-text{
+    grid-area: carro;
+    text-align: start;
+    font-size: 20px;
+}
+
+.summary-text{
+    grid-area: resumen;
+    text-align: start;
+    font-size: 20px;
+
+}
+
+.cart-products-container{
+    background: white;
+    grid-area: products-container;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
+    align-items: center;
+    gap: 20px;
+    padding: 30px;
+
+}
+
+.cart-resume-container{
+    background: white;
+    grid-area: total;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    gap: 20px;
+    padding: 30px;
+    height: fit-content;
+    width: fit-content;
+}
+
+.cart-total, .cart-checkout ,.cart-clear{
+    margin-bottom: 20px;
+}
+
+
+.card-quantity {
+    display: flex;
+    flex-direction: column; /* los hijos se apilan verticalmente */
+    align-items: center;    /* centra botones y cantidad */
+    gap: 4px;               /* separa un poco los elementos */
+    margin: 8px 0;
+}
+
+.cart-page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #000000;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cart-page-btn:hover {
+    background-color: #eee;
+}
+
+.cart-page-btn:active {
+    transform: scale(0.95);
+}
+
+.cart-quantity-number {
+    min-width: 24px;
+    text-align: center;
+    font-weight: 600;
+    color: #333;
+}
+
+.img-producto-card{
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+@media(max-width:870px){
+    .cart-container {
+        grid-template-columns: 1fr; /* una sola columna */
+        grid-template-areas:
+            "carro"
+            "products-container"
+            "resumen"
+            "total";
+    }
+}
+
+@media(max-width:733px){
+    .cart-products-container{
+        grid-template-columns: 1fr; /* una sola columna */
+        text-align: center;
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .cart-resume-container{
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .cart-text,.summary-text{
+        text-align: center;
+
+    }
+}
+
+.empty-cart {
+    display: flex;                  /* Activamos Flexbox */
+    justify-content: center;        /* Centrado horizontal */
+    align-items: center;            /* Centrado vertical */
+    text-align: center;
+    font-size: 24px;
+    color: #555;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    background-color: white;
+    max-width: 900px;
+    min-height: 400px;
+    margin: 100px auto;
+    flex-direction: column;
+}
+
+.empty-link {
+    display: inline-block;
+    text-decoration: none;
+    border-bottom: 1px solid #007bff; /* línea fina */
+    padding-bottom: 2px;
+    transition: 0.3s;
+}
+
+.empty-link:hover {
+    color: #0056b3;
+    border-bottom-color: #0056b3;
+}
+
+@media(max-width:450px){
+    .empty-cart {
+        width: 90%;
+
+    }
+}
+
+
+
+
+/* @media(max-width:400px){
+    .cart-products-container{
+        grid-template-columns: 1fr;
+        text-align: center;
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .cart-resume-container{
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .cart-text,.summary-text{
+        text-align: center;
+
+    }
+
+} */
+
+
+/* FIN CSS PAGE CARRITO */
+
+
+
+/* CSS PAGE CHECKOUT */
+
+.error-message, .error-message-cart {
+    display: none; /* oculto por defecto */
+    background-color: #f8d7da; /* rojo suave */
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-align: center;
+    max-width: 500px;
+}
+
+.div-center{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.error-message-cart{
+    margin-top: 20px;
+    width: 80%;
+}
+
+.success-message{
+    display: none; /* oculto por defecto */
+    background-color: #d7f8da; /* rojo suave */
+    color: #1c7232;
+    border: 1px solid #d7f8da;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-align: center;
+    max-width: 500px;
+}
+
+
+
+.form-control{
+    border: none;
+    border-bottom: 1px solid #ccc; /* línea gris fina */
+    outline: none; /* quita el borde azul al hacer clic */
+    padding: 5px 0;
+    width: 100%;
+    font-size: 16px;
+    background: transparent; /* evita fondo blanco extra */
+}
+
+.form-control:focus {
+    border-bottom: 2px solid #007bff; /* cambia color al enfocar */
+    transition: border-color 0.3s;
+}
+
+.loading{
+    display: flex;
+    align-items: center;
+}
+
+.loader {
+  width: 30px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #25b09b;
+  --_m: 
+    conic-gradient(#0000 10%,#000),
+    linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+          mask: var(--_m);
+  -webkit-mask-composite: source-out;
+          mask-composite: subtract;
+  animation: l3 1s infinite linear;
+}
+@keyframes l3 {to{transform: rotate(1turn)}}
+
+.checkout-title, .form-pago-title{
+    font-size: 28px;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.checkout-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+
+.shipping-form{
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    width: fit-content;
+    background: white;
+    padding: 20px;
+    font-size: 18px;
+}
+
+.form-group{
+    margin-bottom: 15px;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between; /* uno a la izquierda y otro a la derecha */
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Opcional: estilos individuales */
+.btn-confirm-address {
+    align-self: flex-start;
+}
+
+.btn-return-cart {
+    text-decoration: none;
+    padding: 10px 20px;
+}
+
+
+@media (max-width: 560px) {
+    .shipping-form {
+        max-width: 90%; /* opcional: deja márgenes laterales */
+        box-sizing: border-box; /* asegura que el padding no rompa el ancho */
+    }
+
+    .error-message{
+        max-width: 90%;
+    }
+
+    /* .btn-confirm-address, .btn-volver, .confirm-btn{
+        font-size: 12px;
+    }
+
+
+.loading {
+    display: flex;          
+    align-items: center;     
+    min-width: 145px;
+    max-width: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.confirm-btn{
+ flex-shrink: 1;
+}
+
+.loader{
+   width: 10px; 
+   height: 10px;
+} */
+/* 
+            <div class="loading">
+                <div class="confirm-btn">Confirmando dirección</div> 
+                <div class="loader"></div>
+            </div> */
+}
+
+
+@media(max-width:450px){
+
+    .btn-confirm-address, .btn-volver, .confirm-btn{
+        font-size: 12px;
+    }
+
+
+.loading {
+    display: flex;          
+    align-items: center;     
+    min-width: 104px;
+    max-width: 104px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.confirm-btn{
+ flex-shrink: 1;
+}
+
+.loader{
+   width: 5px;
+   padding: 8px;
+   height: 3px;
+}
+}
+
+.form-pago-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 100px auto;
+}
+
+.from-pago{
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    width: fit-content;
+    background: white;
+    padding: 20px;
+    font-size: 18px;
+}
+
+.table-form-pago {
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 30px; 
+    border-collapse: collapse;
+    font-size: 16px;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Encabezados */
+.table-form-pago thead {
+    background-color: #007bff;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table-form-pago th,
+.table-form-pago td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+/* Última fila sin borde */
+.table-form-pago tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Efecto hover */
+.table-form-pago tbody tr:hover {
+    background-color: #f2f6ff;
+}
+
+/* Imagen del producto */
+.table-form-pago img {
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+/* Responsive para móviles */
+@media (max-width: 600px) {
+    .form-pago-container{
+        width: 80%;
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+
+    .table-form-pago {
+        font-size: 14px;
+    }
+
+    .table-form-pago th,
+    .table-form-pago td {
+        padding: 8px;
+    }
+
+    .table-form-pago img {
+        width: 40px;
+    }
+}
+
+@media(max-width:450px){
+
+    .table-form-pago {
+        font-size: 9px;
+    }
+
+    .btn-pago{
+        text-align: center;
+    }
+}
+
+.totales-pago{
+    display: flex;
+    flex-direction: column;
+}
+
+.totales{
+    margin-bottom: 20px;
+}
+
+.form-pago{
+    display: flex;
+    flex-direction: column;
+}
+
+.btn-pago{
+    margin: 40px auto;
+    text-align: center;
+    padding: 10px 20px;
+    background-color: #007bff;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-pago:hover{
+    background-color: #0056b3;
+}
+
+.btn-volver:hover, .btn-confirm-address:hover{
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #000000;
+}
+
+.btn-volver, .btn-confirm-address {
+    display: inline-block;       /* ✅ para que solo ocupe el tamaño del contenido */
+    text-align: center;
+    padding: 10px 20px;
+    background-color: #000000;
+    border-radius: 10px;
+    color: white;
+    width: auto;                 /* ✅ evitar que tome todo el ancho */
+    cursor: pointer;
+    text-decoration: none;       /* si es <a>, quitar subrayado */
+    border: 2px solid #ffffff;
+}
+
+
+.form-pago-button{
+    display: flex;
+    justify-content: flex-end; 
+    margin-top: 20px;
+}
+
+.btn-return-address{
+    display: flex;
+    justify-content: flex-end;
+    width: 100%; 
+    margin-top: 20px;
+}
+
+
+
+/* FIN CSS PAGE CHECKOUT */
+
+
+
+/* CSS PAGE PRODUCT DETAIL */
+
+.productdetail-container{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: 
+        "image title carro"
+        "image description increment"
+        ;
+    align-items: center;
+    margin: 100px auto;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
+    border-radius: 20px;
+    max-width: 1000px;
+    padding: 40px;
+}
+
+
+.img-producto-detail{
+    width: 420px;
+    height: 420px;
+}
+
+.title-brand{
+    margin-left: 10px;
+    font-size: 19px;
+    color: #aaa;
+}
+
+.title-name{
+    margin-left: 10px;
+    font-size: 25px;
+}
+
+.product-image-detail{
+    grid-area: image;
+    margin: 0 auto;
+}
+
+.description-detail{
+    grid-area: description;
+    align-self: start;
+    justify-self: stretch;
+}
+
+.carro-link-detail{
+    grid-area: carro;
+    align-self: start;
+    justify-self: end;
+    margin: 0 auto;
+    font-size: 19px;
+    margin-top: 40px;
+
+}
+
+.btn-style-black{
+    padding: 10px;
+    background-color: #000;
+    color: white;
+    border-radius: 10px;
+    border: 1px solid black
+
+}
+
+.btn-style-black:hover{
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    border: 1px solid black
+
+}
+
+.quantity-controls-detail{
+    grid-area:increment;
+    align-self: start;
+    margin: 0 auto;
+}
+
+
+.title-detail{
+    grid-area:title;
+    align-self: start;
+    margin-top: 20px;
+}
+
+.description-detail{
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.controls-detail{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px auto;
+}
+
+.controls-detail span{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.controls-datail-price{
+    font-size: 25px;
+}
+
+.center-flex{
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 1050px) {
+
+  .productdetail-container {
+    max-width: unset; 
+    width: 95%;
+  }
+
+}
+
+@media (max-width: 900px) {
+  .productdetail-container {
+    display: grid;
+    grid-template-columns: 1fr; /* 🔹 una sola columna */
+    grid-template-areas:
+      "image"
+      "title"
+      "carro"
+      "description"
+      "increment";
+    
+    gap: 20px; /* Espacio entre secciones */
+    align-items: center;
+    justify-items: center; /* Centra el contenido horizontalmente */
+    margin: 40px auto;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
+    border-radius: 20px;
+    max-width: 90%; /* más flexible en móviles */
+    padding: 20px;
+  }
+}
+
+@media (max-width:460px){
+    
+.img-producto-detail{
+    width: 220px;
+    height: 220px;
+}
+
+}
+
+
+
+
+
+/* FIN CSS PAGE PRODUCT DETAIL */

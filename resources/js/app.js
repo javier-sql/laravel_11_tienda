@@ -771,12 +771,14 @@ if (btnPago && formPago) {
 
 document.addEventListener('click', function (e) {
     const link = e.target.closest('.pagination a');
-    if (!link) return; // Si no clickea un enlace de paginación, no hace nada
+    if (!link) return;
 
     e.preventDefault();
 
-    // ✅ Usamos directamente el href (ya viene completo con https)
-    const url = link.href;
+    // ✅ Forzar HTTPS aunque el enlace venga con http
+    let url = link.href;
+    url = url.replace('http://', 'https://');
+
     const container = document.querySelector('#products-list');
 
     fetch(url, {
@@ -788,7 +790,7 @@ document.addEventListener('click', function (e) {
     })
     .then(html => {
         container.innerHTML = html;
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // opcional: subir arriba al cambiar de página
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     })
     .catch(err => console.error('Error cargando productos:', err));
 });

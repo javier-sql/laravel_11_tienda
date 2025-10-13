@@ -99,9 +99,6 @@ Route::post('/cart/increase', [CartController::class, 'increaseFromCartAjax'])->
 
 
 Route::post('/checkout/save-address', [CheckoutController::class, 'saveAddress'])->name('checkout.saveAddress');
-Route::get('/checkout', [CheckoutController::class, 'view'])->name('checkout.view');
-Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
-
 
 //*** Fin ruta Carrito  ***
 
@@ -130,13 +127,3 @@ Route::get('/sucursales/{ciudadCodigo}', [CheckoutController::class, 'getSucursa
 ///*** Ruta Activacion de cuenta */
 Route::get('/activar-cuenta/{token}', [AuthController::class, 'activateAccount'])->name('activate.account');
 ///*** Fin Ruta Activacion de cuenta */
-
-
-// test 
-
-Route::get('/test-tarifa', [CheckoutController::class, 'testTarifaStarken']);
-
-Route::get('/test-ciudades-origen', [CheckoutController::class, 'testCiudadesOrigen']);
-
-
-Route::get('/test', [CheckoutController::class, 'testNominatim']);

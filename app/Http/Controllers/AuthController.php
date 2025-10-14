@@ -24,10 +24,26 @@ class AuthController extends Controller
 public function register(Request $request)
 {
     $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:8|confirmed',
+    'name' => 'required|string|max:255',
+    'email' => 'required|string|email|max:255|unique:users',
+    'password' => 'required|string|min:8|confirmed',
+    ], [
+        'name.required' => 'El nombre es obligatorio.',
+        'name.string' => 'El nombre debe ser un texto.',
+        'name.max' => 'El nombre no puede tener más de 255 caracteres.',
+
+        'email.required' => 'El correo es obligatorio.',
+        'email.string' => 'El correo debe ser un texto.',
+        'email.email' => 'El correo debe ser una dirección válida.',
+        'email.max' => 'El correo no puede tener más de 255 caracteres.',
+        'email.unique' => 'Este correo ya está en uso.',
+
+        'password.required' => 'La contraseña es obligatoria.',
+        'password.string' => 'La contraseña debe ser un texto.',
+        'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+        'password.confirmed' => 'Las contraseñas no coinciden.',
     ]);
+
 
     // Validar el email usando la API de Brevo
     $response = Http::withHeaders([
@@ -36,7 +52,7 @@ public function register(Request $request)
     ])->get('https://api.brevo.com/v3/contacts/' . urlencode($request->email));
 
     if ($response->status() === 404) {
-        return back()->withErrors(['email' => 'El correo ingresado no parece ser válido o no existe.']);
+        return back()->withErrors(['email' => 'El correo ingresado no es válido.']);
     }
 
     // Si pasa la validación, registrar el usuario normalmente
@@ -45,7 +61,10 @@ public function register(Request $request)
         'email' => $request->email,
         'password' => bcrypt($request->password),
         'activation_token' => Str::random(60),
+        'role_id' => 1,
+        'is_active' => false,
     ]);
+    
 
     $this->sendActivationEmail($user);
 
@@ -102,14 +121,14 @@ public function activateAccount($token)
 
     // Si el usuario ya está activo, también evitamos reactivar
     if ($user->is_active) {
-        return redirect('/inicio')->with('info', 'Tu cuenta ya está activada. Puedes iniciar sesión.');
+        return redirect('/login')->with('info', 'Tu cuenta ya está activada. Puedes iniciar sesión.');
     }
 
     $user->is_active = true;
     $user->activation_token = null;
     $user->save();
 
-    return redirect('/inicio')->with('success', 'Cuenta activada correctamente. Ya puedes iniciar sesión.');
+    return redirect('/login')->with('success', 'Cuenta activada correctamente. Ya puedes iniciar sesión.');
 }
 
 

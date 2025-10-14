@@ -147,6 +147,14 @@ public function increaseFromCartAjax(Request $request)
         ], 404);
     }
 
+    // 🔹 Verificar stock antes de agregar al carrito
+    if ($product->stock <= 0) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No hay stock disponible',
+        ]);
+    }
+
     if (!isset($cart[$id])) {
         // Producto aún no agregado, inicializamos
         $cart[$id] = [
@@ -186,6 +194,7 @@ public function increaseFromCartAjax(Request $request)
         'total_price' => $totalPrice
     ]);
 }
+
 
 public function decreaseFromCartAjax(Request $request)
     {

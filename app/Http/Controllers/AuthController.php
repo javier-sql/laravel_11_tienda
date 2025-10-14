@@ -103,7 +103,6 @@ public function activateAccount($token)
 }
 
 
-
     // Enviar correo de activación usando API de Brevo
 private function sendActivationEmail($user)
 {

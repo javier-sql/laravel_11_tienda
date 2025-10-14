@@ -23,28 +23,33 @@ class AuthController extends Controller
     // Registrar usuario
 public function register(Request $request)
 {
-    $validated = $request->validate([
+    $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:3|confirmed',
+        'password' => 'required|string|min:8|confirmed',
     ]);
 
-    $role = Role::where('name', 'usuario')->first();
-    $activation_token = \Illuminate\Support\Str::random(64);
+    // Validar el email usando la API de Brevo
+    $response = Http::withHeaders([
+        'api-key' => env('BREVO_API_KEY'),
+        'Accept' => 'application/json',
+    ])->get('https://api.brevo.com/v3/contacts/' . urlencode($request->email));
 
+    if ($response->status() === 404) {
+        return back()->withErrors(['email' => 'El correo ingresado no parece ser válido o no existe.']);
+    }
+
+    // Si pasa la validación, registrar el usuario normalmente
     $user = User::create([
-        'name' => $validated['name'],
-        'email' => $validated['email'],
-        'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
-        'role_id' => $role->id,
-        'activation_token' => $activation_token,
-        'is_active' => false,
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => bcrypt($request->password),
+        'activation_token' => Str::random(60),
     ]);
 
-    // Enviar el correo de activación
     $this->sendActivationEmail($user);
 
-    return redirect('/inicio')->with('success', 'Revisa tu correo para activar tu cuenta.');
+    return redirect()->route('login')->with('success', 'Cuenta creada. Revisa tu correo para activarla.');
 }
 
     // Mostrar formulario de login
@@ -92,7 +97,12 @@ public function activateAccount($token)
     $user = User::where('activation_token', $token)->first();
 
     if (!$user) {
-        return redirect('/inicio')->with('error', 'Token de activación inválido.');
+        return redirect('/inicio')->with('error', 'El enlace de activación es inválido o ya fue utilizado.');
+    }
+
+    // Si el usuario ya está activo, también evitamos reactivar
+    if ($user->is_active) {
+        return redirect('/inicio')->with('info', 'Tu cuenta ya está activada. Puedes iniciar sesión.');
     }
 
     $user->is_active = true;
@@ -135,4 +145,5 @@ private function sendActivationEmail($user)
         Log::error("Excepción al enviar correo: " . $e->getMessage());
     }
 }
+
 }

@@ -751,24 +751,6 @@ if (btnPago && formPago) {
 }
 // ==== FIN PAGO ==== //
 
-// document.addEventListener('click', function(e) {
-//     const link = e.target.closest('.pagination a');
-//     if (!link) return;
-
-//     e.preventDefault();
-//     // const url = link.href.replace('http://', 'https://'); // forzar HTTPS
-//     const url = new URL(link.getAttribute('href'), window.location.origin).href;
-//     const container = document.querySelector('#products-list');
-
-//     fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-//         .then(response => {
-//             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-//             return response.text();
-//         })
-//         .then(html => container.innerHTML = html)
-//         .catch(err => console.error('Error cargando productos:', err));
-// });
-
 document.addEventListener('click', function (e) {
     const link = e.target.closest('.pagination a');
     if (!link) return;

@@ -8,72 +8,89 @@
 
     <h2 class="checkout-title">¿Dónde quieres recibir tu compra?</h2>
 
-    <form id="shipping-form" class="shipping-form">
-        @csrf
-        {{-- Comuna --}}
-        <div class="form-group">
-            <label for="commune">Selecciona tu comuna</label>
-            <select name="commune_id" id="commune" class="form-control" required>
-                <option value="">Seleccionar</option>
-                @foreach(\App\Models\Commune::all() as $commune)
-                    <option value="{{ $commune->id }}" data-price="{{ $commune->price }}">
-                        {{ $commune->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+<form id="shipping-form" class="shipping-form">
+    @csrf
 
-        {{-- Calle --}}
-        <div class="form-group mt-2">
-            <label for="street">Calle</label>
-            <input type="text" name="street" id="street" class="form-control" placeholder="Ejem. Av. Pedro de Valdivia" required>
-        </div>
+    {{-- Comuna --}}
+    <div class="form-group">
+        <label for="commune">Selecciona tu comuna</label>
+        <select name="commune_id" id="commune" class="form-control" required>
+            <option value="">Seleccionar</option>
+            @foreach(\App\Models\Commune::all() as $commune)
+                <option value="{{ $commune->id }}" 
+                    data-price="{{ $commune->price }}"
+                    {{ old('commune_id', auth()->check() ? auth()->user()->commune_id : '') == $commune->id ? 'selected' : '' }}>
+                    {{ $commune->name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
 
-        {{-- Número --}}
-        <div class="form-group mt-2">
-            <label for="number">Número</label>
-            <input type="text" name="number" id="number" class="form-control" placeholder="Ejem. 123" required>
-        </div>
+    {{-- Calle --}}
+    <div class="form-group mt-2">
+        <label for="street">Calle</label>
+        <input type="text" name="street" id="street" class="form-control" 
+            placeholder="Ejem. Av. Pedro de Valdivia" 
+            value="{{ old('street', auth()->check() ? auth()->user()->street : '') }}" required>
+    </div>
 
-        {{-- Tipo de propiedad --}}
-        <div class="form-group mt-2">
-            <label for="property-type">Tipo de propiedad</label>
-            <select name="property_type" id="property-type" class="form-control" required>
-                <option value="">Seleccionar</option>
-                <option value="dpto">Departamento</option>
-                <option value="casa">Casa</option>
-                <option value="oficina">Oficina</option>
-                <option value="condominio">Condominio</option>
-            </select>
-        </div>
+    {{-- Número --}}
+    <div class="form-group mt-2">
+        <label for="number">Número</label>
+        <input type="text" name="number" id="number" class="form-control" 
+            placeholder="Ejem. 123" 
+            value="{{ old('number', auth()->check() ? auth()->user()->number : '') }}" required>
+    </div>
 
-        {{-- Número según tipo --}}
-        <div class="form-group mt-2" id="property-number-group" style="display:none;">
-            <label for="property-number" id="property-number-label"></label>
-            <input type="text" name="property_number" id="property-number" class="form-control">
-        </div>
+    {{-- Tipo de propiedad --}}
+    <div class="form-group mt-2">
+        <label for="property-type">Tipo de propiedad</label>
+        <select name="property_type" id="property-type" class="form-control" required>
+            <option value="">Seleccionar</option>
+            @php
+                $selectedType = old('property_type', auth()->check() ? auth()->user()->property_type : '');
+            @endphp
+            <option value="dpto" {{ $selectedType == 'dpto' ? 'selected' : '' }}>Departamento</option>
+            <option value="casa" {{ $selectedType == 'casa' ? 'selected' : '' }}>Casa</option>
+            <option value="oficina" {{ $selectedType == 'oficina' ? 'selected' : '' }}>Oficina</option>
+            <option value="condominio" {{ $selectedType == 'condominio' ? 'selected' : '' }}>Condominio</option>
+        </select>
+    </div>
 
-        {{-- Número de teléfono --}}
-        <div class="form-group mt-2">
-            <label for="phone">Número de Teléfono de Contacto</label>
-            <input type="text" name="phone" id="phone" class="form-control" placeholder="Ejem. 912345678" required>
-        </div>
 
-        {{-- Valor del envío --}}
-        <div class="form-group mt-3">
-            <label>Valor del envío:</label>
-            <p id="shipping-price">$0</p>
-        </div>
 
-        <div class="form-buttons">
+    {{-- Número según tipo --}}
+    <div class="form-group mt-2" id="property-number-group" 
+        style="display: {{ old('unit', auth()->check() ? auth()->user()->unit : '') ? 'block' : 'none' }};">
+        <label for="property-number" id="property-number-label">
+            Número {{ old('property_type', auth()->check() ? auth()->user()->property_type : '') }}
+        </label>
+        <input type="text" name="unit" id="property-number" class="form-control"
+            value="{{ old('unit', auth()->check() ? auth()->user()->unit : '') }}">
+    </div>
 
-            <button type="button" id="confirm-address" class="">Confirmar dirección</button>
 
-            <button> <a class="btn-return-cart btn-volver" href="{{ url('/cart') }}"> Volver a Carrito</a></button>
+    {{-- Teléfono --}}
+    <div class="form-group mt-2">
+        <label for="phone">Número de Teléfono de Contacto</label>
+        <input type="text" name="phone" id="phone" class="form-control" 
+            placeholder="Ejem. 912345678" 
+            value="{{ old('phone', auth()->check() ? auth()->user()->phone : '') }}" required>
+    </div>
 
-        </div>
-        
-    </form> 
+    {{-- Valor del envío --}}
+    <div class="form-group mt-3">
+        <label>Valor del envío:</label>
+        <p id="shipping-price">$0</p>
+    </div>
+
+    <div class="form-buttons">
+        <button type="button" id="confirm-address" class="">Confirmar dirección</button>
+        <button><a class="btn-return-cart btn-volver" href="{{ url('/cart') }}">Volver a Carrito</a></button>
+    </div>
+</form>
+
+     
 </div>
 
 

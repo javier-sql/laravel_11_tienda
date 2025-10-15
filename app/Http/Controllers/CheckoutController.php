@@ -11,11 +11,18 @@ use App\Models\Commune;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\AddressService;
 
 
 
 class CheckoutController extends Controller
 {
+    protected $addressService;
+
+    public function __construct(AddressService $addressService)
+    {
+        $this->addressService = $addressService;
+    }
 
     public function view()
     {
@@ -183,7 +190,9 @@ class CheckoutController extends Controller
         $commune = Commune::find($request->commune_id);
 
         // Validar que la dirección coincida con la comuna
-        $isValid = $this->validateCommuneAddress($commune->name, $request->street, $request->number);
+        //$isValid = $this->validateCommuneAddress($commune->name, $request->street, $request->number);
+        $isValid = $this->addressService->validateCommuneAddress($commune->name, $request->street, $request->number);
+
 
         if (!$isValid) {
             Log::warning('Intento de direccion incorrecta', [
@@ -228,33 +237,33 @@ class CheckoutController extends Controller
         return response()->json(['success' => true]);
     }
 
-    private function validateCommuneAddress($communeName, $street, $number)
-    {
-        sleep(2);
-        // Construimos la dirección completa
-        $address = "$number $street, Chile";
+    // private function validateCommuneAddress($communeName, $street, $number)
+    // {
+    //     sleep(2);
+    //     // Construimos la dirección completa
+    //     $address = "$number $street, Chile";
 
-        // Consulta a Nominatim
-        $response = Http::withHeaders([
-            'User-Agent' => 'consulta'
-        ])->get('https://nominatim.openstreetmap.org/search', [
-            'q' => $address,
-            'format' => 'json',
-            'addressdetails' => 1,
-            'limit' => 1
-        ]);
+    //     // Consulta a Nominatim
+    //     $response = Http::withHeaders([
+    //         'User-Agent' => 'consulta'
+    //     ])->get('https://nominatim.openstreetmap.org/search', [
+    //         'q' => $address,
+    //         'format' => 'json',
+    //         'addressdetails' => 1,
+    //         'limit' => 1
+    //     ]);
 
-            $data = $response->json();
-            $osmSuburb = $data[0]['address']['suburb'] ?? null;
+    //         $data = $response->json();
+    //         $osmSuburb = $data[0]['address']['suburb'] ?? null;
 
-            Log::info('Comuna detectada por API', ['suburb' => $osmSuburb]);
+    //         Log::info('Comuna detectada por API', ['suburb' => $osmSuburb]);
 
-            if ($osmSuburb) {
-                return mb_strtolower($osmSuburb) === mb_strtolower($communeName);
-            }
+    //         if ($osmSuburb) {
+    //             return mb_strtolower($osmSuburb) === mb_strtolower($communeName);
+    //         }
 
-        return false;
-    }
+    //     return false;
+    // }
 
     public function flowReturn(Request $request)
     {

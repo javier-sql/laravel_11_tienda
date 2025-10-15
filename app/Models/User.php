@@ -16,10 +16,17 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_id',
         'activation_token',
+        'role_id',
         'is_active',
+        'phone',
+        'street',
+        'number',
+        'unit',
+        'commune_id',
+        'property_type',
     ];
+
     // Relación con el modelo Role
     public function role()
     {

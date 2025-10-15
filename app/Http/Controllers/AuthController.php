@@ -11,9 +11,20 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\AddressService;
+use App\Models\Commune;
 
 class AuthController extends Controller
 {
+
+    protected $addressService;
+
+    public function __construct(AddressService $addressService)
+    {
+        $this->addressService = $addressService;
+    }
+
+
     // Mostrar formulario de registro
     public function showRegistrationForm()
     {
@@ -21,13 +32,67 @@ class AuthController extends Controller
     }
 
     // Registrar usuario
+// public function register(Request $request)
+// {
+//     $request->validate([
+//     'name' => 'required|string|max:255',
+//     'email' => 'required|string|email|max:255|unique:users',
+//     'password' => 'required|string|min:2|confirmed',
+//     ], [
+//         'name.required' => 'El nombre es obligatorio.',
+//         'name.string' => 'El nombre debe ser un texto.',
+//         'name.max' => 'El nombre no puede tener más de 255 caracteres.',
+
+//         'email.required' => 'El correo es obligatorio.',
+//         'email.string' => 'El correo debe ser un texto.',
+//         'email.email' => 'El correo debe ser una dirección válida.',
+//         'email.max' => 'El correo no puede tener más de 255 caracteres.',
+//         'email.unique' => 'Este correo ya está en uso.',
+
+//         'password.required' => 'La contraseña es obligatoria.',
+//         'password.string' => 'La contraseña debe ser un texto.',
+//         'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+//         'password.confirmed' => 'Las contraseñas no coinciden.',
+//     ]);
+
+
+//     $domain = explode('@', $request->email)[1] ?? null;
+//     if (!$domain || !checkdnsrr($domain, 'MX')) {
+//         return back()->withErrors(['email' => 'El dominio del correo no existe.'])->withInput();
+//     }
+
+//     // Si pasa la validación, registrar el usuario normalmente
+//     $user = User::create([
+//         'name' => $request->name,
+//         'email' => $request->email,
+//         'password' => bcrypt($request->password),
+//         'activation_token' => Str::random(60),
+//         'role_id' => 1,
+//         'is_active' => false,
+//     ]);
+    
+
+//     $this->sendActivationEmail($user);
+
+//     return redirect()->route('login')->with('success', 'Cuenta creada. Revisa tu correo para activarla.');
+// }
+
 public function register(Request $request)
 {
     $request->validate([
-    'name' => 'required|string|max:255',
-    'email' => 'required|string|email|max:255|unique:users',
-    'password' => 'required|string|min:8|confirmed',
-    ], [
+        'name' => 'required|string|max:100',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|confirmed|min:6',
+
+        // Validación de dirección
+        'commune_id' => 'required|exists:communes,id',
+        'street' => 'required|string|max:255',
+        'number' => 'required|string|max:10',
+        // 'unit' => 'nullable|string|max:50',
+        'property_type' => 'required|string|max:50',
+        'property_number' => 'nullable|string|max:50',
+        'phone' => 'required|string|max:20',
+    ],[
         'name.required' => 'El nombre es obligatorio.',
         'name.string' => 'El nombre debe ser un texto.',
         'name.max' => 'El nombre no puede tener más de 255 caracteres.',
@@ -44,32 +109,63 @@ public function register(Request $request)
         'password.confirmed' => 'Las contraseñas no coinciden.',
     ]);
 
+    $commune = Commune::find($request->commune_id);
 
-    // Validar el email usando la API de Brevo
-    $response = Http::withHeaders([
-        'api-key' => env('BREVO_API_KEY'),
-        'Accept' => 'application/json',
-    ])->get('https://api.brevo.com/v3/contacts/' . urlencode($request->email));
-
-    if ($response->status() === 404) {
-        return back()->withErrors(['email' => 'El correo ingresado no es válido.']);
+    if (!$commune) {
+        return back()->withErrors([
+                'commune_id' => 'La comuna seleccionada no es válida.'
+        ])->withInput();
     }
 
-    // Si pasa la validación, registrar el usuario normalmente
+
+    $domain = explode('@', $request->email)[1] ?? null;
+    if (!$domain || !checkdnsrr($domain, 'MX')) {
+        return back()->withErrors(['email' => 'El dominio del correo no existe.'])->withInput();
+    }
+
+
+    // Validar dirección usando el servicio
+    $isValid = $this->addressService->validateCommuneAddress(
+            $commune->name,
+            $request->street,
+            $request->number
+    );
+
+    if (!$isValid) {
+        return back()->withErrors([
+            'street' => 'La dirección no coincide con la comuna seleccionada o numero. Si es Avenida comience con "Av." o "Avenida". Si es Pasaje comience con "Pje." o "Pasaje". Si es calle, no use prefijos.'
+        ])->withInput();
+    }
+
+
+    // Crear usuario
     $user = User::create([
         'name' => $request->name,
         'email' => $request->email,
-        'password' => bcrypt($request->password),
+        'password' => Hash::make($request->password),
         'activation_token' => Str::random(60),
         'role_id' => 1,
         'is_active' => false,
+        'phone' => $request->phone,
+        'street' => $request->street,
+        'number' => $request->number,
+        'unit' => $request->property_number,
+        'commune_id' => $request->commune_id,
+        'property_type'=> $request->property_type,
     ]);
-    
+
 
     $this->sendActivationEmail($user);
 
     return redirect()->route('login')->with('success', 'Cuenta creada. Revisa tu correo para activarla.');
+
 }
+
+
+
+
+
+
 
     // Mostrar formulario de login
     public function showLoginForm()
@@ -96,7 +192,7 @@ public function register(Request $request)
         }
 
         return back()->withErrors([
-            'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
+            'email' => 'Las credenciales proporcionadas no coinciden.',
         ])->onlyInput('email');
     }
 

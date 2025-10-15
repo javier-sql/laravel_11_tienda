@@ -1120,6 +1120,8 @@ body {
     max-width: 500px;
 }
 
+
+
 .div-center{
     display: flex;
     flex-direction: column;
@@ -1132,12 +1134,44 @@ body {
 }
 
 .success-message{
-    display: none; /* oculto por defecto */
-    background-color: #d7f8da; /* rojo suave */
+    display: none;
+    background-color: #d7f8da; 
     color: #1c7232;
     border: 1px solid #d7f8da;
     padding: 10px 15px;
     border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-align: center;
+    max-width: 500px;
+}
+
+.success-message-login {
+    display: flex;
+    justify-content: center; 
+    align-items: center;     
+    background-color: #d7f8da;
+    color: #1c7232;
+    border: 1px solid #d7f8da;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin: 15px auto; 
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-align: center;
+    max-width: 500px;
+}
+
+.error-message-login {
+    display: flex; 
+    justify-content: center; 
+    align-items: center;     
+    background-color: #f8d7da; 
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin: 15px auto; 
     margin-bottom: 15px;
     font-size: 14px;
     text-align: center;

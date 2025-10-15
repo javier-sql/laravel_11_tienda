@@ -127,3 +127,9 @@ Route::get('/sucursales/{ciudadCodigo}', [CheckoutController::class, 'getSucursa
 ///*** Ruta Activacion de cuenta */
 Route::get('/activar-cuenta/{token}', [AuthController::class, 'activateAccount'])->name('activate.account');
 ///*** Fin Ruta Activacion de cuenta */
+
+
+
+Route::get('/prueba-success', function () {
+    return redirect('/login')->with('success', 'Sesión creada correctamente.');
+});

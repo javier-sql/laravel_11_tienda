@@ -296,154 +296,180 @@ document.querySelectorAll('.decrease-btn-detail, .increase-btn-detail').forEach(
     });
 
     // ==== CHECKOUT DIRECCIÓN ====
-    const containerfrom = document.getElementById('checkout-container');
+        const containerFrom = document.getElementById('checkout-container');
     const form = document.getElementById('shipping-form');
     const confirmBtn = document.getElementById('confirm-address');
     const shippingPriceEl = document.getElementById('shipping-price');
     const pagoSection = document.getElementById('formulario-pago');
     const returnDiv = document.getElementById('return');
-    const btnconfirm = document.getElementById('confirm-address');
     const errorDiv = document.getElementById('error-message');
 
+    const propertyTypeSelect = document.getElementById('property-type');
+    const numberLabel = document.getElementById('property-number-label');
+    const numberGroup = document.getElementById('property-number-group');
+    const numberInput = document.getElementById('property-number');
+
     if (errorDiv) errorDiv.style.display = 'none';
+    if (confirmBtn) confirmBtn.disabled = true;
+    if (pagoSection) pagoSection.style.display = 'none';
 
-
-    if(btnconfirm){
-        btnconfirm.disabled = true;
-    }
-
-
+    // Volver a checkout si se está en pago
     if (returnDiv) {
         returnDiv.addEventListener('click', () => {
             if (pagoSection) pagoSection.style.display = 'none';
-            if (containerfrom) containerfrom.style.display = 'flex';
+            if (containerFrom) containerFrom.style.display = 'flex';
         });
     }
 
-    if (pagoSection) pagoSection.style.display = "none";
-
+    // ==== Función para validar si se puede habilitar el botón ====
     function checkForm() {
         const commune = document.getElementById('commune')?.value;
         const street = document.getElementById('street')?.value.trim();
         const number = document.getElementById('number')?.value.trim();
         const phone = document.getElementById('phone')?.value.trim();
 
-        if(commune && street && number && phone) {
+        if (commune && street && number && phone) {
             if (confirmBtn) {
-                confirmBtn.disabled = false;               
-                confirmBtn.classList.add('btn-confirm-address'); 
+                confirmBtn.disabled = false;
+                confirmBtn.classList.add('btn-confirm-address');
             }
+
             const selectedOption = document.querySelector('#commune option:checked');
             const price = selectedOption?.dataset.price || 0;
-            if(shippingPriceEl) shippingPriceEl.innerText = '$' + parseInt(price).toLocaleString('es-CL');
+            if (shippingPriceEl) shippingPriceEl.innerText = '$' + parseInt(price).toLocaleString('es-CL');
         } else {
-            if(confirmBtn) confirmBtn.disabled = true;
-            if(shippingPriceEl) shippingPriceEl.innerText = '$0';
+            if (confirmBtn) confirmBtn.disabled = true;
+            if (shippingPriceEl) shippingPriceEl.innerText = '$0';
         }
     }
 
+    // ==== Función para mostrar/ocultar número según tipo ====
+    function updatePropertyNumberInput() {
+        const type = propertyTypeSelect?.value || '';
+        if (['dpto', 'oficina', 'condominio'].includes(type)) {
+            numberLabel.innerText = `Número de ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            numberGroup.style.display = 'block';
+            numberInput.required = true;
+        } else {
+            numberGroup.style.display = 'none';
+            numberInput.value = '';
+            numberInput.required = false;
+        }
+    }
+
+    // Ejecutar al cargar para mostrar valores preseleccionados
+    checkForm();
+    updatePropertyNumberInput();
+
+    // Eventos de cambio/input
     if (form) {
         form.addEventListener('input', checkForm);
         form.addEventListener('change', checkForm);
     }
+    if (propertyTypeSelect) {
+        propertyTypeSelect.addEventListener('change', updatePropertyNumberInput);
+    }
 
-if (confirmBtn) {
-    confirmBtn.addEventListener('click', function() {
-        confirmBtn.disabled = true; // Evitamos múltiples clicks
+    // ==== Confirmar dirección ====
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+            confirmBtn.disabled = true;
+            if (errorDiv) errorDiv.style.display = 'none';
 
-        if (errorDiv) errorDiv.style.display = 'none';
-        
-        confirmBtn.innerHTML = `
-            <div class="loading">
-                <div>Confirmando...</div> 
-                <div class="loader"></div>
-            </div>
-        `;
-        
-        const commune_id = document.getElementById('commune').value;
-        const street = document.getElementById('street').value.trim();
-        const number = document.getElementById('number').value.trim();
-        const propertyType = document.getElementById('property-type')?.value; 
-        const propertyNumber = document.getElementById('property-number')?.value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const shipping = parseInt(document.querySelector('#commune option:checked').dataset.price);
+            confirmBtn.innerHTML = `
+                <div class="loading">
+                    <div>Confirmando...</div> 
+                    <div class="loader"></div>
+                </div>
+            `;
 
-        fetch('/checkout/save-address', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                commune_id, street, number, property_type: propertyType, property_number: propertyNumber, phone, shipping 
+            const commune_id = document.getElementById('commune').value;
+            const street = document.getElementById('street').value.trim();
+            const number = document.getElementById('number').value.trim();
+            const propertyType = propertyTypeSelect?.value;
+            const propertyNumber = numberInput?.value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const shipping = parseInt(document.querySelector('#commune option:checked').dataset.price);
+
+            fetch('/checkout/save-address', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    commune_id, street, number, property_type: propertyType, property_number: propertyNumber, phone, shipping 
+                })
             })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success){
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    containerFrom.style.display = 'none';
+                    if (pagoSection) pagoSection.style.display = 'flex';
 
-                containerfrom.style.display = 'none';
-                const paymentForm = document.getElementById('formulario-pago');
-                if(paymentForm) paymentForm.style.display = 'flex';
+                    const shippingEl = document.getElementById('shipping-total');
+                    if (shippingEl) shippingEl.innerText = shipping.toLocaleString('es-CL');
 
-                const shippingEl = document.getElementById('shipping-total');
-                if(shippingEl) shippingEl.innerText = shipping.toLocaleString('es-CL');
+                    const subtotalEl = document.getElementById('subtotal-products');
+                    const totalEl = document.getElementById('total');
+                    if (subtotalEl && totalEl) {
+                        const subtotal = parseInt(subtotalEl.dataset.value);
+                        totalEl.innerText = (subtotal + shipping).toLocaleString('es-CL');
+                    }
 
-                const subtotalEl = document.getElementById('subtotal-products');
-                const totalEl = document.getElementById('total');
-                if(subtotalEl && totalEl) {
-                    const subtotal = parseInt(subtotalEl.dataset.value);
-                    totalEl.innerText = (subtotal + shipping).toLocaleString('es-CL');
+                    const addressConfirm = document.getElementById('address-confirm');
+                    if (addressConfirm) {
+                        const communeName = document.querySelector('#commune option:checked')?.textContent || '';
+                        addressConfirm.textContent = `${street} Nº ${number}, ${communeName}`;
+                    }
+                } else if (data.error) {
+                    if (errorDiv) {
+                        errorDiv.textContent = data.error;
+                        errorDiv.style.display = 'block';
+                    }
                 }
-
-                const addressConfirm = document.getElementById('address-confirm');
-                if (addressConfirm) {
-                    const communeName = document.querySelector('#commune option:checked')?.textContent || '';
-                    addressConfirm.textContent = `${street} Nº ${number}, ${communeName}`;
-                }
-
-            } else if(data.error){
-                const errorDiv = document.getElementById('error-message');
-                if (errorDiv) {
-                    errorDiv.textContent = data.error;
-                    errorDiv.style.display = 'block';
-                }
-            }
-        })
-        .catch(err => {
-            console.error('Error guardando dirección:', err);
-            alert('Error de servidor, intenta nuevamente');
-        })
-        .finally(() => {
-            
-            confirmBtn.disabled = false;
-            confirmBtn.innerText = "Confirmar dirección";
+            })
+            .catch(err => {
+                console.error('Error guardando dirección:', err);
+                alert('Error de servidor, intenta nuevamente');
+            })
+            .finally(() => {
+                confirmBtn.disabled = false;
+                confirmBtn.innerText = "Confirmar dirección";
+            });
         });
-    });
-}
+    }
 
     // ==== CHECKOUT TIPO PROPIEDAD ====
-    if (document.getElementById('checkout-container')) {
-        const propertyTypeSelect = document.getElementById('property-type');
-        const numberLabel = document.getElementById('property-number-label');
-        const numberGroup = document.getElementById('property-number-group');
-        const numberInput = document.getElementById('property-number');
+if (document.getElementById('checkout-container')) {
+    const propertyTypeSelect = document.getElementById('property-type');
+    const numberLabel = document.getElementById('property-number-label');
+    const numberGroup = document.getElementById('property-number-group');
+    const numberInput = document.getElementById('property-number');
 
-        if (propertyTypeSelect && numberLabel && numberGroup && numberInput) {
-            propertyTypeSelect.addEventListener('change', function() {
-                const type = this.value;
-                if(['dpto','oficina','condominio'].includes(type)) {
-                    numberLabel.innerText = `Número de ${type.charAt(0).toUpperCase() + type.slice(1)}`;
-                    numberGroup.style.display = 'block';
-                    numberInput.required = true;
-                } else {
-                    numberGroup.style.display = 'none';
-                    numberInput.value = '';
-                    numberInput.required = false;
-                }
-            });
-        }
+    if (propertyTypeSelect && numberLabel && numberGroup && numberInput) {
+
+        const togglePropertyNumber = () => {
+            const type = propertyTypeSelect.value;
+            if(['dpto','oficina','condominio'].includes(type)) {
+                numberLabel.innerText = `Número de ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+                numberGroup.style.display = 'block';
+                numberInput.required = true;
+            } else {
+                numberGroup.style.display = 'none';
+                numberInput.value = '';
+                numberInput.required = false;
+            }
+        };
+
+        // Ejecutar al cargar la página
+        togglePropertyNumber();
+
+        // Ejecutar al cambiar el select
+        propertyTypeSelect.addEventListener('change', togglePropertyNumber);
     }
+}
+
 
 
 // ==== CARRUSEL ====
@@ -687,7 +713,7 @@ if (btnPago && formPago) {
 
         const payload = {
             name: formPago.name.value,
-            email: formPago.email.value
+            email: formPago.email.value,
         };
 
         try {
@@ -697,12 +723,13 @@ if (btnPago && formPago) {
                     'X-CSRF-TOKEN': csrfToken,
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
             });
 
             let data = {};
+
             try {
                 data = await response.json();
             } catch {
@@ -710,8 +737,10 @@ if (btnPago && formPago) {
             }
 
             if (data.redirect_url) {
+                // 🔹 NO se reactiva el botón ni se cambia el texto aquí
+                // 🔹 Solo redirigimos, el botón sigue diciendo "Procesando..."
                 window.location.href = data.redirect_url;
-                return;
+                return; // evitamos que se ejecute el finally
             }
 
             if (data.error) {
@@ -721,7 +750,6 @@ if (btnPago && formPago) {
                     try {
                         const bodyObj = JSON.parse(data.body);
                         if (bodyObj.message && bodyObj.message.includes('userEmail')) {
-                            // Extraer el correo del mensaje de Flow
                             const match = bodyObj.message.match(/The userEmail: (.+) is not valid/);
                             if (match) {
                                 const email = match[1];
@@ -744,6 +772,12 @@ if (btnPago && formPago) {
             errorDiv2.textContent = err.message || 'Error al procesar la compra.';
             errorDiv2.style.display = 'block';
         } finally {
+            // 🔹 Solo reactivar el botón si hubo un error (no si hubo redirect)
+            if (!errorDiv2.style.display || errorDiv2.style.display === 'none') {
+                // Significa que no hubo error y ya se redirige → no hacemos nada
+                return;
+            }
+
             btnPago.disabled = false;
             btnPago.querySelector('.btn-text').textContent = 'Pagar';
         }

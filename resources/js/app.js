@@ -345,7 +345,9 @@ document.querySelectorAll('.decrease-btn-detail, .increase-btn-detail').forEach(
 
     // ==== Función para mostrar/ocultar número según tipo ====
     function updatePropertyNumberInput() {
-        const type = propertyTypeSelect?.value || '';
+        if (!propertyTypeSelect || !numberLabel || !numberGroup || !numberInput) return;
+
+        const type = propertyTypeSelect.value || '';
         if (['dpto', 'oficina', 'condominio'].includes(type)) {
             numberLabel.innerText = `Número de ${type.charAt(0).toUpperCase() + type.slice(1)}`;
             numberGroup.style.display = 'block';
@@ -356,6 +358,7 @@ document.querySelectorAll('.decrease-btn-detail, .increase-btn-detail').forEach(
             numberInput.required = false;
         }
     }
+
 
     // Ejecutar al cargar para mostrar valores preseleccionados
     checkForm();

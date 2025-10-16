@@ -343,8 +343,14 @@ class CheckoutController extends Controller
                 }
 
                 return redirect()->route('cart.view')
-                    ->with('successpayment', $status == 2 ? 'Pago aprobado, Le llegara un comprobante a su correo que registro para la compra.' : null)
-                    ->with('errorpayment', $status != 2 ? 'Pago rechazado' : null);
+                    ->with('successpayment', $status == 2 
+                        ? "Pago aprobado para la orden #{$orderId}. Le llegará un comprobante al correo registrado." 
+                        : null)
+                    ->with('errorpayment', $status != 2 
+                        ? "Pago rechazado para la orden #{$orderId}. Motivo: {$message}" 
+                        : null);
+
+
 
 
 

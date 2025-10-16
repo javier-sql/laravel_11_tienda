@@ -766,11 +766,16 @@ if (btnPago && formPago) {
 
 
             if (data.redirect_url) {
-                // 🔹 NO se reactiva el botón ni se cambia el texto aquí
-                // 🔹 Solo redirigimos, el botón sigue diciendo "Procesando..."
+                if (data.errorpayment) {
+                    sessionStorage.setItem('errorpayment', data.errorpayment);
+                }
+                if (data.successpayment) {
+                    sessionStorage.setItem('successpayment', data.successpayment);
+                }
                 window.location.href = data.redirect_url;
-                return; // evitamos que se ejecute el finally
+                return;
             }
+
 
             if (data.error) {
                 let message = data.error;
@@ -857,6 +862,24 @@ document.addEventListener('click', function (e) {
     })
     .catch(err => console.error('Error cargando productos:', err));
 });
+
+
+const successPayment = sessionStorage.getItem('successpayment');
+const errorPayment = sessionStorage.getItem('errorpayment');
+
+if (successPayment) {
+    const el = document.querySelector('.success-message-payment');
+    el.textContent = successPayment;
+    el.parentElement.style.display = 'block';
+    sessionStorage.removeItem('successpayment');
+}
+
+if (errorPayment) {
+    const el = document.querySelector('.error-message-payment');
+    el.textContent = errorPayment;
+    el.parentElement.style.display = 'block';
+    sessionStorage.removeItem('errorpayment');
+}
 
 
 

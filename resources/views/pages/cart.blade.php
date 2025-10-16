@@ -11,7 +11,7 @@
 
 
 
-        <!-- @if(session('successpayment'))
+        @if(session('successpayment'))
             <div class="div-center">
                 <div class="success-message-payment">{{ session('successpayment') }}</div>
             </div>
@@ -21,15 +21,7 @@
             <div class="div-center">
                 <div class="error-message-payment">{{ session('errorpayment') }}</div>
             </div>
-        @endif -->
-
-        <div class="div-center" style="display:none;">
-            <div class="success-message-payment"></div>
-        </div>
-        <div class="div-center" style="display:none;">
-            <div class="error-message-payment"></div>
-        </div>
-
+        @endif
 
         @if($success)
             <div class="div-center">
@@ -37,11 +29,11 @@
             </div>
         @endif
 
-        <!-- @if($error)
+        @if($error)
             <div class="div-center">
                 <div class="error-message-cart">Pago Rechazado</div>
             </div>
-        @endif -->
+        @endif
 
 
         <div class="errorstock-message div-center" style="display:none;">

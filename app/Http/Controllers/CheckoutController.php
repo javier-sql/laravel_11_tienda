@@ -159,7 +159,7 @@ class CheckoutController extends Controller
                 "currency" => "CLP",
                 "commerceOrder" => $order->id,
                 "email" => $order->customer_email,
-                "subject" => "Compra de prueba",
+                "subject" => "Compra #{$order->id}",
                 "urlConfirmation" => "$urlApp/flow/confirmacion",
                 "urlReturn" => "$urlApp/flow/retorno",
                 "service" => "payment/create"
@@ -342,10 +342,10 @@ class CheckoutController extends Controller
                     ]);
                 }
 
-                return redirect()->route('cart.view', [
-                    'success' => $status == 2 ? '2' : '0',
-                    'message' => $status == 2 ? 'Pago aprobado' : 'Pago rechazado'
-                ]);
+                return redirect()->route('cart.view')
+                    ->with('successpayment', $status == 2 ? 'Pago aprobado, Le llegara un comprobante a su correo que registro para la compra.' : null)
+                    ->with('errorpayment', $status != 2 ? 'Pago rechazado' : null);
+
 
 
             }

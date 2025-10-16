@@ -8,6 +8,21 @@
 
 
     <div id="cart-container" class="container">
+
+
+
+        @if(session('successpayment'))
+            <div class="div-center">
+                <div class="success-message-payment">{{ session('successpayment') }}</div>
+            </div>
+        @endif
+
+        @if(session('errorpayment'))
+            <div class="div-center">
+                <div class="error-message-payment">{{ session('errorpayment') }}</div>
+            </div>
+        @endif
+
         @if($success)
             <div class="div-center">
                 <div class="success-message">{{ $success }}</div>

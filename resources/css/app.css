@@ -1121,7 +1121,7 @@ body {
 }
 
 
-.error-message-stock{
+.error-message-stock, .error-message-payment{
     display: flex;
     background-color: #f8d7da; /* rojo suave */
     color: #721c24;
@@ -1160,7 +1160,7 @@ body {
     max-width: 500px;
 }
 
-.success-message-login {
+.success-message-login, .success-message-payment {
     display: flex;
     justify-content: center; 
     align-items: center;     

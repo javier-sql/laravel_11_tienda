@@ -322,7 +322,11 @@ document.querySelectorAll('.decrease-btn-detail, .increase-btn-detail').forEach(
             if (containerFrom) containerFrom.style.display = 'flex';
         });
     }
-setTimeout(checkForm, 100);
+
+setTimeout(() => {
+    if (typeof checkForm === 'function') checkForm();
+}, 100);
+
     // ==== Función para validar si se puede habilitar el botón ====
 function checkForm() {
     const commune = document.getElementById('commune')?.value;
@@ -348,10 +352,8 @@ function checkForm() {
             confirmBtn.classList.remove('btn-confirm-address');
     }
 
-    const select = document.querySelector('#commune');
-    const selectedOption = select.querySelector(`option[value="${select.value}"]`);
+    const selectedOption = document.querySelector('#commune option:checked');
     const price = selectedOption?.dataset.price || 0;
-
     if (shippingPriceEl) shippingPriceEl.innerText = '$' + parseInt(price).toLocaleString('es-CL');
 }
 

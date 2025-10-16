@@ -16,10 +16,14 @@
 
         @if($error)
             <div class="div-center">
-                <div class="error-message-cart" style="display: block;">Pago Rechazado</div>
+                <div class="error-message-cart">Pago Rechazado</div>
             </div>
         @endif
-        <div class="error-message">Pago Rechazado</div>
+
+
+        <div class="errorstock-message div-center" style="display:none;">
+            <div class="error-message-stock"></div>
+        </div>
 
         @if(session('cart') && count(session('cart')) > 0)
         @php $total = 0; @endphp
@@ -76,6 +80,7 @@
             </div>
         </div>
         @else
+
             <div class="empty-cart">
                 <p class="empty-title">Tu carrito está vacío.</p>
                 <p>Vista nuestros productos. <a class="empty-link" href="{{ url('/productos') }}"> Aquí</a></p>

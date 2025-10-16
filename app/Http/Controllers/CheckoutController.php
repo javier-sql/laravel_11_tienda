@@ -64,9 +64,29 @@ class CheckoutController extends Controller
                 // Validar stock
                 if ($product->stock < $item['quantity']) {
                     DB::rollBack();
-                    return redirect()->route('cart.view')
-                        ->with('error', "El producto {$product->name} no tiene stock suficiente. Stock actual: {$product->stock}");
+
+                    // ⚠️ Quitar el producto del carrito de la sesión
+                    $cart = session('cart', []);
+                    unset($cart[$productId]);
+                    session(['cart' => $cart]);
+
+                    $msg = "El producto {$product->name} no tiene stock suficiente y será borrado de tu carrito. Stock actual: {$product->stock}";
+
+                    // Si la petición viene por fetch/AJAX
+                    if ($request->expectsJson()) {
+                        return response()->json([
+                            'errorstock' => $msg,
+                            'redirect_url' => route('cart.view'),
+                        ]);
+                    }
+
+                    // Si es form normal
+                    return redirect()->route('cart.view')->with('errorstock', $msg);
                 }
+
+
+
+
 
                 $realPrice = $product->price;
                 $quantity = $item['quantity'];

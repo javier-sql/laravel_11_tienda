@@ -296,7 +296,9 @@ document.querySelectorAll('.decrease-btn-detail, .increase-btn-detail').forEach(
     });
 
     // ==== CHECKOUT DIRECCIÓN ====
-        const containerFrom = document.getElementById('checkout-container');
+
+
+    const containerFrom = document.getElementById('checkout-container');
     const form = document.getElementById('shipping-form');
     const confirmBtn = document.getElementById('confirm-address');
     const shippingPriceEl = document.getElementById('shipping-price');
@@ -320,28 +322,39 @@ document.querySelectorAll('.decrease-btn-detail, .increase-btn-detail').forEach(
             if (containerFrom) containerFrom.style.display = 'flex';
         });
     }
-
+setTimeout(checkForm, 100);
     // ==== Función para validar si se puede habilitar el botón ====
-    function checkForm() {
-        const commune = document.getElementById('commune')?.value;
-        const street = document.getElementById('street')?.value.trim();
-        const number = document.getElementById('number')?.value.trim();
-        const phone = document.getElementById('phone')?.value.trim();
+function checkForm() {
+    const commune = document.getElementById('commune')?.value;
+    const street = document.getElementById('street')?.value.trim();
+    const number = document.getElementById('number')?.value.trim();
+    const phone = document.getElementById('phone')?.value.trim();
+    const propertyType = propertyTypeSelect?.value;
+    const propertyNumber = numberInput?.value.trim();
 
-        if (commune && street && number && phone) {
-            if (confirmBtn) {
-                confirmBtn.disabled = false;
-                confirmBtn.classList.add('btn-confirm-address');
-            }
+    let valid = commune && street && phone; // campos obligatorios
 
-            const selectedOption = document.querySelector('#commune option:checked');
-            const price = selectedOption?.dataset.price || 0;
-            if (shippingPriceEl) shippingPriceEl.innerText = '$' + parseInt(price).toLocaleString('es-CL');
-        } else {
-            if (confirmBtn) confirmBtn.disabled = true;
-            if (shippingPriceEl) shippingPriceEl.innerText = '$0';
-        }
+    // Número de propiedad solo si aplica
+    if (['dpto', 'oficina', 'condominio'].includes(propertyType)) {
+        valid = valid && propertyNumber;
     }
+
+    if (confirmBtn) {
+        confirmBtn.disabled = !valid;
+        if (valid){
+            confirmBtn.classList.add('btn-confirm-address');
+        }
+        else 
+            confirmBtn.classList.remove('btn-confirm-address');
+    }
+
+    const select = document.querySelector('#commune');
+    const selectedOption = select.querySelector(`option[value="${select.value}"]`);
+    const price = selectedOption?.dataset.price || 0;
+
+    if (shippingPriceEl) shippingPriceEl.innerText = '$' + parseInt(price).toLocaleString('es-CL');
+}
+
 
     // ==== Función para mostrar/ocultar número según tipo ====
     function updatePropertyNumberInput() {
@@ -361,8 +374,9 @@ document.querySelectorAll('.decrease-btn-detail, .increase-btn-detail').forEach(
 
 
     // Ejecutar al cargar para mostrar valores preseleccionados
+    updatePropertyNumberInput();    
     checkForm();
-    updatePropertyNumberInput();
+
 
     // Eventos de cambio/input
     if (form) {
@@ -738,6 +752,16 @@ if (btnPago && formPago) {
             } catch {
                 throw new Error('Ocurrió un error inesperado.');
             }
+            
+            if (data.errorstock) {
+            // Guardar el mensaje en sessionStorage
+            sessionStorage.setItem('errorstock', data.errorstock);
+            
+            // Redirigir al carrito
+            window.location.href = data.redirect_url;
+            return;
+            }
+
 
             if (data.redirect_url) {
                 // 🔹 NO se reactiva el botón ni se cambia el texto aquí
@@ -786,6 +810,24 @@ if (btnPago && formPago) {
         }
     });
 }
+
+    const errorStock = sessionStorage.getItem('errorstock');
+
+    if (errorStock) {
+        // Buscar todos los elementos con la clase errorstock-message
+        const elements = document.querySelectorAll('.errorstock-message');
+        elements.forEach(el => {
+            const msgEl = el.querySelector('.error-message-stock');
+            if (msgEl) {
+                msgEl.textContent = errorStock;
+                el.style.display = 'block';
+            }
+        });
+
+        // Limpiar el mensaje después de mostrarlo
+        sessionStorage.removeItem('errorstock');
+    }
+
 // ==== FIN PAGO ==== //
 
 document.addEventListener('click', function (e) {

@@ -15,7 +15,7 @@
     <div class="form-group">
         <label for="commune">Selecciona tu comuna</label>
         <select name="commune_id" id="commune" class="form-control" required>
-            <option value="">Seleccionar</option>
+            <option value="0">Seleccionar</option>
             @foreach(\App\Models\Commune::all() as $commune)
                 <option value="{{ $commune->id }}" 
                     data-price="{{ $commune->price }}"
@@ -159,9 +159,6 @@
                 </div>
             </div>
     </div>
-
-
-
 
     
 </div>
